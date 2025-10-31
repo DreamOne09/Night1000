@@ -25,43 +25,38 @@
         }
     
         body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background-color: var(--primary-bg); /* 純黑背景 */
+            /* ... 其他屬性保持不變 ... */
+            background-color: #000000; /* 設定一個後備純黑背景色，以防圖片載入失敗 */
             
-            /* 全新的漸層背景：從純黑到帶有微妙螢光綠的深色 */
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(57, 255, 20, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 85% 50%, rgba(57, 255, 20, 0.05) 0%, transparent 40%),
-                linear-gradient(to bottom, #000000, #0a0a0a); /* 純黑到稍淺黑的漸層 */
+            /* 使用您的 background.jpg 作為背景 */
+            background-image: url('background.jpg');
+            background-size: cover;       /* 讓圖片覆蓋整個背景 */
+            background-position: center;  /* 圖片居中顯示 */
+            background-repeat: no-repeat; /* 不重複圖片 */
+            background-attachment: fixed; /* 背景圖片固定，不隨滾動條移動 */
             
-            color: var(--text-light);
-            font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif; /* Inter 為預設中文字體 */
-            padding: 20px;
-            text-align: center; /* 確保所有文本居中 */
-            margin: 0;
-            overflow-x: hidden;
-            position: relative;
+            /* 確保文字清晰，疊加一層半透明深色覆蓋層 (可選，但推薦) */
+            position: relative; /* 為了 ::before 偽元素定位 */
+            z-index: 0; /* 確保 body 在偽元素之下 */
         }
-    
-        /* 背景網格或線條效果 (Web3 風格) */
-        body::before {
+        
+        /* 添加一個半透明的覆蓋層，讓前景文字更清晰 */
+        body::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
-                linear-gradient(to right, var(--border-color) 1px, transparent 1px),
-                linear-gradient(to bottom, var(--border-color) 1px, transparent 1px);
-            background-size: 80px 80px;
-            opacity: 0.1; /* 稍微明顯一點 */
-            pointer-events: none;
-            z-index: -1;
+            background-color: rgba(0, 0, 0, 0.4); /* 半透明的黑色覆蓋層 */
+            z-index: -1; /* 位於內容之下，背景圖片之上 */
+        }
+        
+        /* 原有的網格效果可以保留，或者根據新背景調整透明度 */
+        body::before {
+            /* ... 保持原樣或調整 opacity ... */
+            opacity: 0.05; /* 可以稍微降低透明度，讓網格不那麼搶眼 */
+            z-index: -2; /* 位於覆蓋層之下，背景圖片之上 */
         }
         
         h1 {
