@@ -1263,23 +1263,21 @@
         ];
 
         // --- 2. 遊戲邏輯 (原生 JavaScript) ---
-        // (這裡放原本的 window.onload 邏輯)
-        
-        // --- 遊戲邏輯 (原生 JavaScript) ---
 
-        window.onload = function() {
+        // 使用 DOMContentLoaded 確保 DOM 結構已準備好
+        document.addEventListener('DOMContentLoaded', function() {
 
             // 檢查題目庫是否成功載入 (由 questions.js 提供)
             if (typeof truthQuestions === 'undefined' || typeof dareQuestions === 'undefined') {
-                document.getElementById('question-text').textContent = '錯誤：未能載入題目庫 (questions.js)，請檢查檔案路徑、名稱是否正確 (questions.js)，或清除瀏覽器緩存。';
-                return; // 終止執行
+                document.getElementById('question-text').textContent = '錯誤：未能載入題目庫 (questions.js)。請確認檔案名稱、路徑是否正確（大小寫需完全一致）並清除緩存。';
+                return; // 終止執行，避免錯誤傳播
             }
 
-            let currentType = ''; // 'truth' 或 'dare'
+            let currentType = ''; 
             let usedTruthIndices = [];
             let usedDareIndices = [];
-            const initialText = '點擊下方按鈕開始遊戲吧！';
-
+            
+            // 獲取 DOM 元素
             const elements = {
                 questionText: document.getElementById('question-text'),
                 typeText: document.getElementById('type-text'),
@@ -1299,14 +1297,13 @@
 
             /**
              * 隨機獲取新題目
-             * @param {string} type - 'truth' 或 'dare'
              */
             function getNewQuestion(type) {
                 const questionList = type === 'truth' ? truthQuestions : dareQuestions;
                 let usedIndices = type === 'truth' ? usedTruthIndices : usedDareIndices;
                 
                 if (usedIndices.length === questionList.length) {
-                    usedIndices.length = 0; // 清空陣列
+                    usedIndices.length = 0;
                     alert(`${type === 'truth' ? '真心話' : '大冒險'} 題庫已全部抽取完畢，將重置計數！`);
                 }
 
@@ -1317,6 +1314,7 @@
 
                 usedIndices.push(randomIndex);
 
+                // 更新使用的索引 (確保全域變數被正確修改)
                 if (type === 'truth') {
                     usedTruthIndices = usedIndices;
                 } else {
@@ -1328,35 +1326,39 @@
 
             /**
              * 處理按鈕點擊事件 (切換或換題)
-             * @param {string} newType - 'truth' 或 'dare'
              */
             function handleNextQuestion(newType) {
                 currentType = newType;
 
+                // 1. 動畫效果：題目淡出
                 elements.questionBox.style.opacity = '0';
                 elements.questionBox.style.transform = 'scale(0.95)';
-                elements.typeText.style.opacity = '0'; // 題型文字也淡出
+                elements.typeText.style.opacity = '0';
 
                 setTimeout(() => {
+                    // 2. 抽取新題目
                     const newQuestion = getNewQuestion(currentType);
                     elements.questionText.textContent = newQuestion;
 
+                    // 3. 更新介面顯示
                     elements.changeBtn.style.display = 'inline-block';
                     
                     elements.typeText.style.opacity = '1';
                     elements.typeText.className = currentType === 'truth' ? 'type-truth' : 'type-dare';
                     elements.typeLabel.textContent = currentType === 'truth' ? '真心話' : '大冒險';
 
+                    // 統計數字
                     const currentUsed = currentType === 'truth' ? usedTruthIndices.length : usedDareIndices.length;
                     const total = currentType === 'truth' ? truthQuestions.length : dareQuestions.length;
                     elements.usageStats.textContent = `(${currentType === 'truth' ? '真心話' : '大冒險'} 已抽取 ${currentUsed} / ${total} 題)`;
 
+                    // 4. 動畫效果：題目淡入並恢復
                     elements.questionBox.style.opacity = '1';
                     elements.questionBox.style.transform = 'scale(1)';
                 }, 300);
             }
 
-            // --- 事件監聽器 ---
+            // --- 事件監聽器 (確保在 DOM 元素存在後才綁定) ---
 
             elements.truthBtn.addEventListener('click', () => handleNextQuestion('truth'));
             elements.dareBtn.addEventListener('click', () => handleNextQuestion('dare'));
@@ -1365,7 +1367,7 @@
                     handleNextQuestion(currentType);
                 }
             });
-        };
+        });
         
     </script>
 </body>
