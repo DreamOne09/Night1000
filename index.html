@@ -6,38 +6,47 @@
     <title>NightBox 1000 - 真心話大冒險</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Major+Mono+Display&display=swap" rel="stylesheet">
     
     <script src="questions.js" defer></script>
 
     <style>
-        /* CSS 樣式 - WEB3 創業風格 */
+        /* CSS 樣式 - 全新 WEB3 創業風格 */
         :root {
-            --primary-bg: #1a1a1a; /* 主要背景色 (深黑) */
-            --secondary-bg: #282828; /* 次要背景色 (稍淺的黑) */
+            --primary-bg: #0a0a0a; /* 更深的純黑背景 */
+            --secondary-bg: #1a1a1a; /* 次要區塊背景，比主背景稍亮 */
             --text-light: #e0e0e0;
             --text-dark: #f0f0f0;
             --accent-green: #39FF14; /* 螢光綠 */
             --accent-green-dark: #2ce611;
             --glow-green: rgba(57, 255, 20, 0.4);
-            --border-color: #444;
-        
-            /* 新增：用於漸層的深色調 */
-            --deep-blue: #0f0a20; 
-            --deep-purple: #1b0a2d;
+            --border-color: #333; /* 淺一點的邊框色 */
+            --dark-green-glow: rgba(0, 80, 0, 0.4); /* 暗綠色光暈 */
         }
-
-        /* 應用漸層背景 */
+    
         body {
-            /* (其他屬性保持不變) */
-            background-color: var(--primary-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: var(--primary-bg); /* 純黑背景 */
             
-            /* 替換：新增微妙的徑向漸層背景 */
-            background-image: radial-gradient(circle at top left, var(--deep-blue) 0%, var(--primary-bg) 70%),
-                              radial-gradient(circle at bottom right, var(--deep-purple) 0%, var(--primary-bg) 70%);
-            background-blend-mode: screen; /* 混合模式讓漸層更柔和 */
+            /* 全新的漸層背景：從純黑到帶有微妙螢光綠的深色 */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(57, 255, 20, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 85% 50%, rgba(57, 255, 20, 0.05) 0%, transparent 40%),
+                linear-gradient(to bottom, #000000, #0a0a0a); /* 純黑到稍淺黑的漸層 */
+            
+            color: var(--text-light);
+            font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif; /* Inter 為預設中文字體 */
+            padding: 20px;
+            text-align: center; /* 確保所有文本居中 */
+            margin: 0;
+            overflow-x: hidden;
+            position: relative;
         }
-
+    
         /* 背景網格或線條效果 (Web3 風格) */
         body::before {
             content: '';
@@ -49,104 +58,105 @@
             background-image: 
                 linear-gradient(to right, var(--border-color) 1px, transparent 1px),
                 linear-gradient(to bottom, var(--border-color) 1px, transparent 1px);
-            background-size: 80px 80px; /* 網格大小 */
-            opacity: 0.05; /* 微弱效果 */
-            pointer-events: none; /* 不影響點擊事件 */
+            background-size: 80px 80px;
+            opacity: 0.1; /* 稍微明顯一點 */
+            pointer-events: none;
             z-index: -1;
         }
-
-        /* 應用藝術字體 */
+        
         h1 {
+            font-family: 'Major Mono Display', monospace; /* NightBox 1000 使用藝術字體 */
             font-size: clamp(4rem, 8vw, 6rem);
             font-weight: 700;
             letter-spacing: 0.15em;
             margin-bottom: 0.2em;
-            text-shadow: 0 0 15px var(--glow-green), 0 0 5px var(--accent-green);
+            text-shadow: 0 0 20px var(--glow-green), 0 0 8px var(--accent-green); /* 更強烈的光暈 */
             line-height: 1.2;
             color: var(--text-dark);
-            
-            /* 新增：應用藝術字體 */
-            font-family: 'Major Mono Display', monospace; 
+            text-align: center; /* 確保 h1 居中 */
         }
-
+    
         h2 {
+            font-family: 'Inter', sans-serif; /* 中文字使用 Inter 字體 */
             font-size: clamp(1.5rem, 4vw, 2.5rem);
             margin-top: 0;
-            margin-bottom: 3.5rem; /* 增加間距 */
+            margin-bottom: 3.5rem;
             font-weight: 300;
             color: var(--text-light);
+            text-align: center; /* 確保 h2 居中 */
         }
-
+    
         #question-box {
-            background-color: var(--secondary-bg); /* 深色區塊背景 */
+            background-color: var(--secondary-bg);
             padding: 2.5rem 3rem;
-            border-radius: 12px; /* 稍大圓角 */
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), /* 更強烈的陰影 */
-                        0 0 15px var(--glow-green); /* 螢光綠外發光 */
-            min-height: 180px; /* 增加高度 */
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), /* 更強烈的陰影 */
+                        0 0 20px var(--glow-green); /* 更明顯的螢光綠外發光 */
+            min-height: 180px;
             display: flex;
             align-items: center;
             justify-content: center;
             max-width: 90%;
             width: 100%;
             margin-bottom: 3rem;
-            border: 1px solid var(--border-color); /* 輕微邊框 */
+            border: 1px solid var(--accent-green); /* 邊框改為螢光綠 */
             transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
             position: relative;
         }
         #question-box:hover {
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6), 0 0 20px var(--accent-green);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 25px var(--accent-green);
         }
-
+    
         #question-text {
-            font-size: clamp(1.2rem, 2.2vw, 2.2rem); /* 題目字體更大 */
+            font-size: clamp(1.2rem, 2.2vw, 2.2rem);
             font-weight: 400;
             line-height: 1.8;
             margin: 0;
-            color: var(--text-dark); /* 題目文字顏色 */
+            color: var(--text-dark);
+            text-align: center; /* 題目文本居中 */
         }
-
+    
         #type-text {
-            font-size: 1.3rem; /* 標籤字體大一點 */
-            font-weight: bold; /* 加粗 */
-            color: var(--accent-green); /* 螢光綠 */
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--accent-green);
             margin-bottom: 1.5rem;
             min-height: 1.3rem;
-            text-shadow: 0 0 8px var(--glow-green); /* 螢光綠文字發光 */
+            text-shadow: 0 0 8px var(--glow-green);
+            text-align: center; /* 類型文本居中 */
         }
-
+    
         #button-group {
             display: flex;
-            gap: 1.2rem; /* 稍大間距 */
+            gap: 1.2rem;
             margin-top: 2rem;
-            flex-wrap: wrap; /* 響應式換行 */
+            flex-wrap: wrap;
             justify-content: center;
         }
-
+    
         .btn {
-            padding: 15px 30px; /* 增大按鈕 */
+            padding: 15px 30px;
             font-size: 1.1rem;
             cursor: pointer;
-            border-radius: 8px; /* 稍大圓角 */
+            border-radius: 8px;
             border: none;
             font-weight: bold;
             transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
-            text-transform: uppercase; /* 大寫 */
+            text-transform: uppercase;
             letter-spacing: 0.05em;
-            background-color: var(--accent-green); /* 螢光綠按鈕 */
-            color: var(--primary-bg); /* 深色文字 */
-            box-shadow: 0 0 10px rgba(57, 255, 20, 0.6); /* 螢光綠陰影 */
+            background-color: var(--accent-green);
+            color: var(--primary-bg);
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.6);
         }
-
+    
         .btn:active {
             transform: scale(0.96);
         }
-
-        /* 換一題按鈕 */
+    
         #change-btn {
-            background-color: var(--secondary-bg); /* 次要背景色 */
-            color: var(--accent-green); /* 螢光綠文字 */
-            border: 1px solid var(--accent-green); /* 螢光綠邊框 */
+            background-color: var(--secondary-bg);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
             box-shadow: 0 0 8px rgba(57, 255, 20, 0.4);
             display: none;
         }
@@ -155,8 +165,7 @@
             color: var(--primary-bg);
             box-shadow: 0 0 15px rgba(57, 255, 20, 0.8);
         }
-
-        /* 真心話按鈕 */
+    
         #truth-btn {
             background-color: var(--accent-green);
             color: var(--primary-bg);
@@ -166,8 +175,7 @@
             background-color: var(--accent-green-dark); 
             box-shadow: 0 0 20px rgba(57, 255, 20, 0.8);
         }
-
-        /* 大冒險按鈕 */
+    
         #dare-btn {
             background-color: var(--accent-green);
             color: var(--primary-bg);
@@ -177,20 +185,20 @@
             background-color: var(--accent-green-dark);
             box-shadow: 0 0 20px rgba(57, 255, 20, 0.8);
         }
-
+    
         .type-truth .type-label, .type-dare .type-label { 
             color: var(--accent-green); 
             text-shadow: 0 0 8px var(--glow-green);
         }
-
+    
         #stats {
-            margin-top: 4rem; /* 增大間距 */
+            margin-top: 4rem;
             font-size: 1rem;
-            color: var(--border-color); /* 淺灰色，比較不搶眼 */
+            color: var(--border-color);
+            text-align: center; /* 統計數據文本居中 */
         }
         #stats p { margin: 0.5rem 0; }
-
-        /* 響應式設計 */
+    
         @media (max-width: 600px) {
             h1 { font-size: 3rem; }
             h2 { font-size: 1.2rem; margin-bottom: 2rem; }
@@ -222,7 +230,6 @@
     <div id="stats">
         <p>題庫總數：真心話 <span id="truth-count">0</span> 題 / 大冒險 <span id="dare-count">0</span> 題</p>
         <p><span id="usage-stats">(未開始抽取)</span></p>
-        <p><span id="usage-stats">本遊戲由可憐窮人開發，歡迎捐款至 中華郵政 700 帳號 0081181 0422722</span></p>
     </div>
 
     <script>
