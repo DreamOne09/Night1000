@@ -5,130 +5,203 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NightBox 1000 - 真心話大冒險</title>
     
-    <script src="questions.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <script src="questions.js" defer></script>
 
     <style>
-        /* CSS 樣式 - 模擬 Check-in Box 風格 */
+        /* CSS 樣式 - WEB3 創業風格 */
+        :root {
+            --primary-bg: #1a1a1a; /* 主要背景色 (深黑) */
+            --secondary-bg: #282828; /* 次要背景色 (稍淺的黑) */
+            --text-light: #e0e0e0; /* 淺色文字 */
+            --text-dark: #f0f0f0; /* 深色文字 (用於對比) */
+            --accent-green: #39FF14; /* 螢光綠 */
+            --accent-green-dark: #2ce611; /* 螢光綠深色版 (hover) */
+            --glow-green: rgba(57, 255, 20, 0.4); /* 螢光綠光暈 */
+            --border-color: #444; /* 邊框色 */
+        }
+
         body {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            background-color: #33363b; /* 深灰色背景 */
-            color: #ffffff; /* 白色文字 */
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-light);
+            font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif; /* 使用 Inter 或其他無襯線字體 */
             padding: 20px;
             text-align: center;
             margin: 0;
             overflow-x: hidden;
+            position: relative; /* 為了背景特效 */
+        }
+
+        /* 背景網格或線條效果 (Web3 風格) */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, var(--border-color) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--border-color) 1px, transparent 1px);
+            background-size: 80px 80px; /* 網格大小 */
+            opacity: 0.05; /* 微弱效果 */
+            pointer-events: none; /* 不影響點擊事件 */
+            z-index: -1;
         }
 
         h1 {
-            font-size: clamp(40px, 8vw, 90px); /* 讓中文大字體適應寬度 */
-            font-weight: bold;
-            letter-spacing: 5px;
-            margin-bottom: 0;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            font-size: clamp(4rem, 8vw, 6rem); /* 讓中文大字體適應寬度 */
+            font-weight: 700; /* 加粗 */
+            letter-spacing: 0.15em; /* 增加字距 */
+            margin-bottom: 0.2em;
+            text-shadow: 0 0 15px var(--glow-green), 0 0 5px var(--accent-green); /* 螢光綠光暈 */
             line-height: 1.2;
+            color: var(--text-dark); /* 主標題顏色 */
         }
 
         h2 {
-            font-size: clamp(20px, 4vw, 40px);
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
             margin-top: 0;
-            margin-bottom: 50px;
+            margin-bottom: 3.5rem; /* 增加間距 */
             font-weight: 300;
+            color: var(--text-light);
         }
 
         #question-box {
-            background-color: rgba(0, 0, 0, 0.4);
-            padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            min-height: 150px;
+            background-color: var(--secondary-bg); /* 深色區塊背景 */
+            padding: 2.5rem 3rem;
+            border-radius: 12px; /* 稍大圓角 */
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), /* 更強烈的陰影 */
+                        0 0 15px var(--glow-green); /* 螢光綠外發光 */
+            min-height: 180px; /* 增加高度 */
             display: flex;
             align-items: center;
             justify-content: center;
-            max-width: 80%;
+            max-width: 90%;
             width: 100%;
-            margin-bottom: 40px;
-            /* 輕微動畫效果 */
-            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border-color); /* 輕微邊框 */
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            position: relative;
+        }
+        #question-box:hover {
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6), 0 0 20px var(--accent-green);
         }
 
         #question-text {
-            font-size: clamp(1rem, 1.8vw, 1.8rem);
-            font-weight: 300;
-            line-height: 1.6;
+            font-size: clamp(1.2rem, 2.2vw, 2.2rem); /* 題目字體更大 */
+            font-weight: 400;
+            line-height: 1.8;
             margin: 0;
+            color: var(--text-dark); /* 題目文字顏色 */
         }
 
         #type-text {
-            font-size: 1.2rem;
-            font-weight: normal;
-            color: #ccc;
-            margin-bottom: 15px;
-            min-height: 1.2rem; /* 確保在隱藏時不會跳動 */
+            font-size: 1.3rem; /* 標籤字體大一點 */
+            font-weight: bold; /* 加粗 */
+            color: var(--accent-green); /* 螢光綠 */
+            margin-bottom: 1.5rem;
+            min-height: 1.3rem;
+            text-shadow: 0 0 8px var(--glow-green); /* 螢光綠文字發光 */
         }
 
         #button-group {
             display: flex;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 1.2rem; /* 稍大間距 */
+            margin-top: 2rem;
+            flex-wrap: wrap; /* 響應式換行 */
+            justify-content: center;
         }
 
         .btn {
-            padding: 12px 25px;
-            font-size: 1rem;
+            padding: 15px 30px; /* 增大按鈕 */
+            font-size: 1.1rem;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 8px; /* 稍大圓角 */
             border: none;
             font-weight: bold;
-            transition: background-color 0.3s, transform 0.1s;
+            transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
+            text-transform: uppercase; /* 大寫 */
+            letter-spacing: 0.05em;
+            background-color: var(--accent-green); /* 螢光綠按鈕 */
+            color: var(--primary-bg); /* 深色文字 */
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.6); /* 螢光綠陰影 */
         }
 
         .btn:active {
-            transform: scale(0.98);
+            transform: scale(0.96);
         }
 
         /* 換一題按鈕 */
         #change-btn {
-            background-color: #55585f; /* 灰色系 */
-            color: #ffffff;
-            border: 1px solid #777a82;
-            display: none; /* 初始隱藏 */
+            background-color: var(--secondary-bg); /* 次要背景色 */
+            color: var(--accent-green); /* 螢光綠文字 */
+            border: 1px solid var(--accent-green); /* 螢光綠邊框 */
+            box-shadow: 0 0 8px rgba(57, 255, 20, 0.4);
+            display: none;
         }
-        #change-btn:hover { background-color: #777a82; }
+        #change-btn:hover { 
+            background-color: var(--accent-green); 
+            color: var(--primary-bg);
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.8);
+        }
 
         /* 真心話按鈕 */
         #truth-btn {
-            background-color: #f44336; /* 紅色 */
-            color: #ffffff;
+            background-color: var(--accent-green);
+            color: var(--primary-bg);
+            border: 2px solid var(--accent-green);
         }
-        #truth-btn:hover { background-color: #d32f2f; }
+        #truth-btn:hover { 
+            background-color: var(--accent-green-dark); 
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.8);
+        }
 
         /* 大冒險按鈕 */
         #dare-btn {
-            background-color: #2196f3; /* 藍色 */
-            color: #ffffff;
+            background-color: var(--accent-green);
+            color: var(--primary-bg);
+            border: 2px solid var(--accent-green);
         }
-        #dare-btn:hover { background-color: #1976d2; }
+        #dare-btn:hover { 
+            background-color: var(--accent-green-dark);
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.8);
+        }
 
-        .type-truth { color: #f44336; }
-        .type-dare { color: #2196f3; }
+        .type-truth .type-label, .type-dare .type-label { 
+            color: var(--accent-green); 
+            text-shadow: 0 0 8px var(--glow-green);
+        }
 
         #stats {
-            margin-top: 50px;
-            font-size: 0.9rem;
-            color: #777a82;
+            margin-top: 4rem; /* 增大間距 */
+            font-size: 1rem;
+            color: var(--border-color); /* 淺灰色，比較不搶眼 */
         }
-        #stats p { margin: 5px 0; }
+        #stats p { margin: 0.5rem 0; }
+
+        /* 響應式設計 */
+        @media (max-width: 600px) {
+            h1 { font-size: 3rem; }
+            h2 { font-size: 1.2rem; margin-bottom: 2rem; }
+            #question-box { padding: 2rem 1.5rem; min-height: 120px; margin-bottom: 2.5rem; }
+            #question-text { font-size: 1.1rem; }
+            #type-text { font-size: 1rem; }
+            .btn { padding: 12px 20px; font-size: 0.95rem; }
+            #button-group { flex-direction: column; gap: 0.8rem; width: 80%; }
+        }
     </style>
 </head>
 <body>
 
-    <h1>欠應盒子</h1>
-    <h2>Check-in Box</h2>
+    <h1>NightBox 1000</h1>
+    <h2>三五好友一起玩真心話大冒險</h2>
 
     <div id="question-box">
         <p id="question-text">點擊下方按鈕開始遊戲吧！</p>
@@ -148,114 +221,107 @@
     </div>
 
     <script>
-        // --- 2. 遊戲邏輯 (原生 JavaScript) ---
-        
-        // 確保 questions.js 已加載，並定義了 truthQuestions 和 dareQuestions
-        if (typeof truthQuestions === 'undefined' || typeof dareQuestions === 'undefined') {
-            document.getElementById('question-text').innerText = '錯誤：未能載入題目庫 (questions.js)';
-            throw new Error('questions.js not loaded or variables undefined.');
-        }
+        // --- 遊戲邏輯 (原生 JavaScript) ---
 
-        let currentType = ''; // 'truth' 或 'dare'
-        let usedTruthIndices = [];
-        let usedDareIndices = [];
-        const initialText = '點擊下方按鈕開始遊戲吧！';
+        window.onload = function() {
 
-        const elements = {
-            questionText: document.getElementById('question-text'),
-            typeText: document.getElementById('type-text'),
-            typeLabel: document.getElementById('type-label'),
-            changeBtn: document.getElementById('change-btn'),
-            truthBtn: document.getElementById('truth-btn'),
-            dareBtn: document.getElementById('dare-btn'),
-            questionBox: document.getElementById('question-box'),
-            truthCount: document.getElementById('truth-count'),
-            dareCount: document.getElementById('dare-count'),
-            usageStats: document.getElementById('usage-stats')
-        };
-
-        // 初始化統計數字
-        elements.truthCount.textContent = truthQuestions.length;
-        elements.dareCount.textContent = dareQuestions.length;
-
-        /**
-         * 隨機獲取新題目
-         * @param {string} type - 'truth' 或 'dare'
-         */
-        function getNewQuestion(type) {
-            const questionList = type === 'truth' ? truthQuestions : dareQuestions;
-            let usedIndices = type === 'truth' ? usedTruthIndices : usedDareIndices;
-            
-            // 如果所有題目都抽過了，重置索引
-            if (usedIndices.length === questionList.length) {
-                usedIndices.length = 0; // 清空陣列
-                alert(`${type === 'truth' ? '真心話' : '大冒險'} 題庫已全部抽取完畢，將重置計數！`);
+            // 檢查題目庫是否成功載入 (由 questions.js 提供)
+            if (typeof truthQuestions === 'undefined' || typeof dareQuestions === 'undefined') {
+                document.getElementById('question-text').textContent = '錯誤：未能載入題目庫 (questions.js)，請檢查檔案路徑、名稱是否正確 (questions.js)，或清除瀏覽器緩存。';
+                return; // 終止執行
             }
 
-            let randomIndex;
-            do {
-                // 隨機生成一個未曾使用過的索引
-                randomIndex = Math.floor(Math.random() * questionList.length);
-            } while (usedIndices.includes(randomIndex));
+            let currentType = ''; // 'truth' 或 'dare'
+            let usedTruthIndices = [];
+            let usedDareIndices = [];
+            const initialText = '點擊下方按鈕開始遊戲吧！';
 
-            // 更新已使用的索引
-            usedIndices.push(randomIndex);
+            const elements = {
+                questionText: document.getElementById('question-text'),
+                typeText: document.getElementById('type-text'),
+                typeLabel: document.getElementById('type-label'),
+                changeBtn: document.getElementById('change-btn'),
+                truthBtn: document.getElementById('truth-btn'),
+                dareBtn: document.getElementById('dare-btn'),
+                questionBox: document.getElementById('question-box'),
+                truthCount: document.getElementById('truth-count'),
+                dareCount: document.getElementById('dare-count'),
+                usageStats: document.getElementById('usage-stats')
+            };
 
-            // 更新使用記錄
-            if (type === 'truth') {
-                usedTruthIndices = usedIndices;
-            } else {
-                usedDareIndices = usedIndices;
-            }
-            
-            return questionList[randomIndex];
-        }
+            // 初始化統計數字
+            elements.truthCount.textContent = truthQuestions.length;
+            elements.dareCount.textContent = dareQuestions.length;
 
-        /**
-         * 處理按鈕點擊事件 (切換或換題)
-         * @param {string} newType - 'truth' 或 'dare'
-         */
-        function handleNextQuestion(newType) {
-            let isTypeChanged = newType !== currentType;
-            currentType = newType;
-
-            // 1. 動畫效果：題目淡出並縮小
-            elements.questionBox.style.opacity = '0';
-            elements.questionBox.style.transform = 'scale(0.95)';
-
-            setTimeout(() => {
-                // 2. 抽取新題目
-                const newQuestion = getNewQuestion(currentType);
-                elements.questionText.textContent = newQuestion;
-
-                // 3. 更新介面顯示
-                elements.changeBtn.style.display = 'inline-block';
+            /**
+             * 隨機獲取新題目
+             * @param {string} type - 'truth' 或 'dare'
+             */
+            function getNewQuestion(type) {
+                const questionList = type === 'truth' ? truthQuestions : dareQuestions;
+                let usedIndices = type === 'truth' ? usedTruthIndices : usedDareIndices;
                 
-                // 題型提示
-                elements.typeText.style.opacity = '1';
-                elements.typeText.className = currentType === 'truth' ? 'type-truth' : 'type-dare';
-                elements.typeLabel.textContent = currentType === 'truth' ? '真心話' : '大冒險';
+                if (usedIndices.length === questionList.length) {
+                    usedIndices.length = 0; // 清空陣列
+                    alert(`${type === 'truth' ? '真心話' : '大冒險'} 題庫已全部抽取完畢，將重置計數！`);
+                }
 
-                // 統計數字
-                const currentUsed = currentType === 'truth' ? usedTruthIndices.length : usedDareIndices.length;
-                const total = currentType === 'truth' ? truthQuestions.length : dareQuestions.length;
-                elements.usageStats.textContent = `(${currentType === 'truth' ? '真心話' : '大冒險'} 已抽取 ${currentUsed} / ${total} 題)`;
+                let randomIndex;
+                do {
+                    randomIndex = Math.floor(Math.random() * questionList.length);
+                } while (usedIndices.includes(randomIndex));
 
-                // 4. 動畫效果：題目淡入並恢復
-                elements.questionBox.style.opacity = '1';
-                elements.questionBox.style.transform = 'scale(1)';
-            }, 300); // 等待淡出動畫結束
-        }
+                usedIndices.push(randomIndex);
 
-        // --- 3. 事件監聽器 ---
-
-        elements.truthBtn.addEventListener('click', () => handleNextQuestion('truth'));
-        elements.dareBtn.addEventListener('click', () => handleNextQuestion('dare'));
-        elements.changeBtn.addEventListener('click', () => {
-            if (currentType) {
-                handleNextQuestion(currentType);
+                if (type === 'truth') {
+                    usedTruthIndices = usedIndices;
+                } else {
+                    usedDareIndices = usedIndices;
+                }
+                
+                return questionList[randomIndex];
             }
-        });
+
+            /**
+             * 處理按鈕點擊事件 (切換或換題)
+             * @param {string} newType - 'truth' 或 'dare'
+             */
+            function handleNextQuestion(newType) {
+                currentType = newType;
+
+                elements.questionBox.style.opacity = '0';
+                elements.questionBox.style.transform = 'scale(0.95)';
+                elements.typeText.style.opacity = '0'; // 題型文字也淡出
+
+                setTimeout(() => {
+                    const newQuestion = getNewQuestion(currentType);
+                    elements.questionText.textContent = newQuestion;
+
+                    elements.changeBtn.style.display = 'inline-block';
+                    
+                    elements.typeText.style.opacity = '1';
+                    elements.typeText.className = currentType === 'truth' ? 'type-truth' : 'type-dare';
+                    elements.typeLabel.textContent = currentType === 'truth' ? '真心話' : '大冒險';
+
+                    const currentUsed = currentType === 'truth' ? usedTruthIndices.length : usedDareIndices.length;
+                    const total = currentType === 'truth' ? truthQuestions.length : dareQuestions.length;
+                    elements.usageStats.textContent = `(${currentType === 'truth' ? '真心話' : '大冒險'} 已抽取 ${currentUsed} / ${total} 題)`;
+
+                    elements.questionBox.style.opacity = '1';
+                    elements.questionBox.style.transform = 'scale(1)';
+                }, 300);
+            }
+
+            // --- 事件監聽器 ---
+
+            elements.truthBtn.addEventListener('click', () => handleNextQuestion('truth'));
+            elements.dareBtn.addEventListener('click', () => handleNextQuestion('dare'));
+            elements.changeBtn.addEventListener('click', () => {
+                if (currentType) {
+                    handleNextQuestion(currentType);
+                }
+            });
+        };
         
     </script>
 </body>
