@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NightBox 1000 - 真心話大冒險</title>
+    
+    <script src="questions.js"></script>
+
+    <style>
+        /* CSS 樣式 - 模擬 Check-in Box 風格 */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #33363b; /* 深灰色背景 */
+            color: #ffffff; /* 白色文字 */
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            font-size: clamp(40px, 8vw, 90px); /* 讓中文大字體適應寬度 */
+            font-weight: bold;
+            letter-spacing: 5px;
+            margin-bottom: 0;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: clamp(20px, 4vw, 40px);
+            margin-top: 0;
+            margin-bottom: 50px;
+            font-weight: 300;
+        }
+
+        #question-box {
+            background-color: rgba(0, 0, 0, 0.4);
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 80%;
+            width: 100%;
+            margin-bottom: 40px;
+            /* 輕微動畫效果 */
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        #question-text {
+            font-size: clamp(1rem, 1.8vw, 1.8rem);
+            font-weight: 300;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        #type-text {
+            font-size: 1.2rem;
+            font-weight: normal;
+            color: #ccc;
+            margin-bottom: 15px;
+            min-height: 1.2rem; /* 確保在隱藏時不會跳動 */
+        }
+
+        #button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        /* 換一題按鈕 */
+        #change-btn {
+            background-color: #55585f; /* 灰色系 */
+            color: #ffffff;
+            border: 1px solid #777a82;
+            display: none; /* 初始隱藏 */
+        }
+        #change-btn:hover { background-color: #777a82; }
+
+        /* 真心話按鈕 */
+        #truth-btn {
+            background-color: #f44336; /* 紅色 */
+            color: #ffffff;
+        }
+        #truth-btn:hover { background-color: #d32f2f; }
+
+        /* 大冒險按鈕 */
+        #dare-btn {
+            background-color: #2196f3; /* 藍色 */
+            color: #ffffff;
+        }
+        #dare-btn:hover { background-color: #1976d2; }
+
+        .type-truth { color: #f44336; }
+        .type-dare { color: #2196f3; }
+
+        #stats {
+            margin-top: 50px;
+            font-size: 0.9rem;
+            color: #777a82;
+        }
+        #stats p { margin: 5px 0; }
+    </style>
+</head>
+<body>
+
+    <h1>欠應盒子</h1>
+    <h2>Check-in Box</h2>
+
+    <div id="question-box">
+        <p id="question-text">點擊下方按鈕開始遊戲吧！</p>
+    </div>
+
+    <p id="type-text" style="opacity: 0;">— 這是 **<span id="type-label">真心話</span>** 題目 —</p>
+
+    <div id="button-group">
+        <button id="change-btn" class="btn">換一題</button>
+        <button id="truth-btn" class="btn">真心話</button>
+        <button id="dare-btn" class="btn">大冒險</button>
+    </div>
+
+    <div id="stats">
+        <p>題庫總數：真心話 <span id="truth-count">0</span> 題 / 大冒險 <span id="dare-count">0</span> 題</p>
+        <p><span id="usage-stats">(未開始抽取)</span></p>
+    </div>
+
+    <script>
+        // --- 2. 遊戲邏輯 (原生 JavaScript) ---
+        
+        // 確保 questions.js 已加載，並定義了 truthQuestions 和 dareQuestions
+        if (typeof truthQuestions === 'undefined' || typeof dareQuestions === 'undefined') {
+            document.getElementById('question-text').innerText = '錯誤：未能載入題目庫 (questions.js)';
+            throw new Error('questions.js not loaded or variables undefined.');
+        }
+
+        let currentType = ''; // 'truth' 或 'dare'
+        let usedTruthIndices = [];
+        let usedDareIndices = [];
+        const initialText = '點擊下方按鈕開始遊戲吧！';
+
+        const elements = {
+            questionText: document.getElementById('question-text'),
+            typeText: document.getElementById('type-text'),
+            typeLabel: document.getElementById('type-label'),
+            changeBtn: document.getElementById('change-btn'),
+            truthBtn: document.getElementById('truth-btn'),
+            dareBtn: document.getElementById('dare-btn'),
+            questionBox: document.getElementById('question-box'),
+            truthCount: document.getElementById('truth-count'),
+            dareCount: document.getElementById('dare-count'),
+            usageStats: document.getElementById('usage-stats')
+        };
+
+        // 初始化統計數字
+        elements.truthCount.textContent = truthQuestions.length;
+        elements.dareCount.textContent = dareQuestions.length;
+
+        /**
+         * 隨機獲取新題目
+         * @param {string} type - 'truth' 或 'dare'
+         */
+        function getNewQuestion(type) {
+            const questionList = type === 'truth' ? truthQuestions : dareQuestions;
+            let usedIndices = type === 'truth' ? usedTruthIndices : usedDareIndices;
+            
+            // 如果所有題目都抽過了，重置索引
+            if (usedIndices.length === questionList.length) {
+                usedIndices.length = 0; // 清空陣列
+                alert(`${type === 'truth' ? '真心話' : '大冒險'} 題庫已全部抽取完畢，將重置計數！`);
+            }
+
+            let randomIndex;
+            do {
+                // 隨機生成一個未曾使用過的索引
+                randomIndex = Math.floor(Math.random() * questionList.length);
+            } while (usedIndices.includes(randomIndex));
+
+            // 更新已使用的索引
+            usedIndices.push(randomIndex);
+
+            // 更新使用記錄
+            if (type === 'truth') {
+                usedTruthIndices = usedIndices;
+            } else {
+                usedDareIndices = usedIndices;
+            }
+            
+            return questionList[randomIndex];
+        }
+
+        /**
+         * 處理按鈕點擊事件 (切換或換題)
+         * @param {string} newType - 'truth' 或 'dare'
+         */
+        function handleNextQuestion(newType) {
+            let isTypeChanged = newType !== currentType;
+            currentType = newType;
+
+            // 1. 動畫效果：題目淡出並縮小
+            elements.questionBox.style.opacity = '0';
+            elements.questionBox.style.transform = 'scale(0.95)';
+
+            setTimeout(() => {
+                // 2. 抽取新題目
+                const newQuestion = getNewQuestion(currentType);
+                elements.questionText.textContent = newQuestion;
+
+                // 3. 更新介面顯示
+                elements.changeBtn.style.display = 'inline-block';
+                
+                // 題型提示
+                elements.typeText.style.opacity = '1';
+                elements.typeText.className = currentType === 'truth' ? 'type-truth' : 'type-dare';
+                elements.typeLabel.textContent = currentType === 'truth' ? '真心話' : '大冒險';
+
+                // 統計數字
+                const currentUsed = currentType === 'truth' ? usedTruthIndices.length : usedDareIndices.length;
+                const total = currentType === 'truth' ? truthQuestions.length : dareQuestions.length;
+                elements.usageStats.textContent = `(${currentType === 'truth' ? '真心話' : '大冒險'} 已抽取 ${currentUsed} / ${total} 題)`;
+
+                // 4. 動畫效果：題目淡入並恢復
+                elements.questionBox.style.opacity = '1';
+                elements.questionBox.style.transform = 'scale(1)';
+            }, 300); // 等待淡出動畫結束
+        }
+
+        // --- 3. 事件監聽器 ---
+
+        elements.truthBtn.addEventListener('click', () => handleNextQuestion('truth'));
+        elements.dareBtn.addEventListener('click', () => handleNextQuestion('dare'));
+        elements.changeBtn.addEventListener('click', () => {
+            if (currentType) {
+                handleNextQuestion(currentType);
+            }
+        });
+        
+    </script>
+</body>
+</html>
