@@ -6,6 +6,7 @@
     <title>NightBox 1000 - 真心話大冒險</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&display=swap" rel="stylesheet">
     
     <script src="questions.js" defer></script>
 
@@ -14,28 +15,27 @@
         :root {
             --primary-bg: #1a1a1a; /* 主要背景色 (深黑) */
             --secondary-bg: #282828; /* 次要背景色 (稍淺的黑) */
-            --text-light: #e0e0e0; /* 淺色文字 */
-            --text-dark: #f0f0f0; /* 深色文字 (用於對比) */
+            --text-light: #e0e0e0;
+            --text-dark: #f0f0f0;
             --accent-green: #39FF14; /* 螢光綠 */
-            --accent-green-dark: #2ce611; /* 螢光綠深色版 (hover) */
-            --glow-green: rgba(57, 255, 20, 0.4); /* 螢光綠光暈 */
-            --border-color: #444; /* 邊框色 */
+            --accent-green-dark: #2ce611;
+            --glow-green: rgba(57, 255, 20, 0.4);
+            --border-color: #444;
+        
+            /* 新增：用於漸層的深色調 */
+            --deep-blue: #0f0a20; 
+            --deep-purple: #1b0a2d;
         }
 
+        /* 應用漸層背景 */
         body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+            /* (其他屬性保持不變) */
             background-color: var(--primary-bg);
-            color: var(--text-light);
-            font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif; /* 使用 Inter 或其他無襯線字體 */
-            padding: 20px;
-            text-align: center;
-            margin: 0;
-            overflow-x: hidden;
-            position: relative; /* 為了背景特效 */
+            
+            /* 替換：新增微妙的徑向漸層背景 */
+            background-image: radial-gradient(circle at top left, var(--deep-blue) 0%, var(--primary-bg) 70%),
+                              radial-gradient(circle at bottom right, var(--deep-purple) 0%, var(--primary-bg) 70%);
+            background-blend-mode: screen; /* 混合模式讓漸層更柔和 */
         }
 
         /* 背景網格或線條效果 (Web3 風格) */
@@ -55,14 +55,18 @@
             z-index: -1;
         }
 
+        /* 應用藝術字體 */
         h1 {
-            font-size: clamp(4rem, 8vw, 6rem); /* 讓中文大字體適應寬度 */
-            font-weight: 700; /* 加粗 */
-            letter-spacing: 0.15em; /* 增加字距 */
+            font-size: clamp(4rem, 8vw, 6rem);
+            font-weight: 700;
+            letter-spacing: 0.15em;
             margin-bottom: 0.2em;
-            text-shadow: 0 0 15px var(--glow-green), 0 0 5px var(--accent-green); /* 螢光綠光暈 */
+            text-shadow: 0 0 15px var(--glow-green), 0 0 5px var(--accent-green);
             line-height: 1.2;
-            color: var(--text-dark); /* 主標題顏色 */
+            color: var(--text-dark);
+            
+            /* 新增：應用藝術字體 */
+            font-family: 'Major Mono Display', monospace; 
         }
 
         h2 {
