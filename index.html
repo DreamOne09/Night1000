@@ -3,6 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NightBox 1000：專為夜晚聚會設計的真心話大冒險題庫，包含 1000 題深層情感、趣味互動和靈魂拷問。Web3 Vibe 風格，立即免費抽取題目！">
+    <meta name="keywords" content="真心話大冒險, NightBox, 派對遊戲, 情感, 題庫, web3, Vibe Coding, 遊戲題目, 情侶對話, 深度夜聊">
+    <meta name="robots" content="index, follow">
+    
+    <meta property="og:title" content="NightBox — 晚上跟朋友一起玩的 1000 題真心話大冒險">
+    <meta property="og:description" content="立即挑戰 1000 題情感、人生、靈魂拷問的派對遊戲！">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://dreamone09.github.io/Night1000">
+    
     <title>NightBox 1000 - 真心話大冒險</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
@@ -228,6 +237,23 @@
         <p>歡迎捐款至中華郵政 700 帳號 0081181 0422722</p>
     </div>
 
+    <div id="seo-content-cache" style="position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden;">
+    <h1>NightBox 1000 終極真心話大冒險題庫全集</h1>
+    <p>
+        NightBox 1000 包含了最深的靈魂拷問、情感關係、曖昧探索、人生抉擇、最糗經歷、最愛的人、理想型、婚戀觀、金錢觀等上千個熱門話題。
+        讓您的派對、夜聊和朋友聚會充滿深度與刺激！
+    </p>
+
+    <h2>完整真心話與大冒險關鍵字一覽：</h2>
+    <ul id="seo-question-list">
+        <li>真心話題目範例: 你的初吻是幾歲，在哪里被誰奪走?</li>
+        <li>大冒險題目範例: 模仿一種現場沒有的動物叫聲和動作 30 秒。</li>
+        <li>情感：你最愛的人面前做過什麼樣的傻事？</li>
+        <li>人生：你最怕的事情或東西是什麼？</li>
+        <li>親密：你最多同時和幾個人戀愛？</li>
+    </ul>
+    </div>
+
     <script>
 
         // --- 1. 題目庫 (從 questions.js 複製到此處) ---
@@ -395,7 +421,7 @@
             "最想去哪旅行？打算什麼時候去？和誰一起去？",
             "做過最浪漫的事情是什麼？",
             "世界末日你只能救在座除你之外的一個異性，會是誰？",
-            "喜歡我粘人一點還是不粘人？程度如何？",
+            "喜歡伴侶黏人一點還是不黏人？程度如何？",
             "你變成一名警察，看到了家人有過犯罪行為，會不會報警？為什麼？",
             "如果感覺我們真的不合適，你會痛快放手嗎？",
             "對求婚有什麼幻想？",
@@ -1365,6 +1391,31 @@
                     elements.questionBox.style.transform = 'scale(1)';
                 }, 300);
             }
+
+            /**
+             * [SEO FIX] 將所有題目載入到隱藏的 DOM 元素中，讓爬蟲可以抓取
+             */
+            function loadQuestionsForSEO() {
+                const seoList = document.getElementById('seo-question-list');
+                if (!seoList) return; // 確保元素存在
+                
+                let allQuestions = truthQuestions.concat(dareQuestions);
+                let listHtml = '';
+
+                // 限制最多只寫入前 200 題，避免 DOM 變得過於龐大
+                const limit = Math.min(200, allQuestions.length); 
+
+                for (let i = 0; i < limit; i++) {
+                    // 為了 SEO，將每道題作為一個列表項
+                    listHtml += `<li>${allQuestions[i]}</li>`;
+                }
+                
+                seoList.innerHTML = listHtml;
+            }
+
+            // 確保在所有初始化完成後執行 SEO 載入
+            // 由於 questions.js 已經載入，這裡可以立即調用
+            loadQuestionsForSEO();
 
             // --- 事件監聽器 (確保在 DOM 元素存在後才綁定) ---
 
