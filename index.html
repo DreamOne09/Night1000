@@ -32,6 +32,84 @@
             --border-color: #333; /* 淺一點的邊框色 */
             --dark-green-glow: rgba(0, 80, 0, 0.4); /* 暗綠色光暈 */
         }
+        /* --- 彈出式視窗 (Modal) 樣式 --- */
+        #intro-modal {
+            position: fixed;
+            z-index: 1000; /* 確保在所有內容之上 */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.9); /* 帶有透明度的黑色背景 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s;
+        }
+        
+        #modal-content {
+            background-color: var(--secondary-bg);
+            margin: 15% auto; /* 視覺居中 */
+            padding: 30px;
+            border: 3px solid var(--accent-green); /* 螢光綠邊框 */
+            border-radius: 12px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 0 40px var(--glow-green); /* 螢光綠發光 */
+            text-align: left;
+            position: relative;
+            animation: fadeIn 0.5s; /* 進入動畫 */
+        }
+        
+        #modal-content h3 {
+            color: var(--accent-green);
+            text-shadow: 0 0 5px var(--glow-green);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        
+        #modal-content p {
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        #modal-close-btn {
+            background-color: var(--accent-green);
+            color: var(--primary-bg);
+            font-weight: bold;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            float: right; /* 置於右側 */
+            transition: background-color 0.2s;
+            box-shadow: 0 0 10px var(--glow-green);
+        }
+        
+        #modal-close-btn:hover {
+            background-color: var(--accent-green-dark);
+        }
+        
+        /* 確保文本能換行 */
+        .dev-note {
+            font-style: italic;
+            font-size: 0.9em;
+            color: var(--border-color);
+            margin-top: 10px;
+        }
+        
+        /* 關閉時的動畫 */
+        .modal-hidden {
+            display: none !important;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
     
         body {
             /* ... 其他屬性保持不變 ... */
@@ -215,6 +293,29 @@
     </style>
 </head>
 <body>
+    
+    <div id="intro-modal">
+        <div id="modal-content">
+            <h3>真心話還是大冒險？</h3>
+    
+            <p>
+                **遊戲規則：** 選擇真心話，那你就要勇敢地說出口；如果是大冒險，那你抽到題目只好付諸行動！
+            </p>
+    
+            <p>
+                **關於網站：** 這個網站收納了**超過一千題**題庫，透過這些問題，無論是在酒吧跟新朋友喝酒，還是老友們單純想殺時間，你都能更深入地了解你的親朋好友們！
+            </p>
+            
+            <p class="dev-note">
+                開發者：邊緣噁男肥宅
+            </p>
+    
+            <button id="modal-close-btn">
+                我知道了，開始遊戲
+            </button>
+        </div>
+    </div>
+    
 
     <h1>NightBox 1000</h1>
     <h2>三五好友一起玩真心話大冒險</h2>
@@ -990,7 +1091,7 @@
 
         const dareQuestions = [
            // --- 行為實踐 ＋ 自我表達 (共 500 題) ---
-            "用異性（現場）的聲音和語氣，模仿他/她對現場一位同性朋友說一句挑釁的話。",
+            "現在匯款網址下面的指定帳號1000元新台幣。",
             "立刻找一個現場異性，十指緊扣對視 30 秒，期間不能笑，不能說話。",
             "背一位異性繞場一圈，並大喊你對他/她的三個優點。",
             "用最性感的表情和動作，做一個大家都滿意的鬼臉。",
@@ -1300,6 +1401,25 @@
 
         // 使用 DOMContentLoaded 確保 DOM 結構已準備好
         document.addEventListener('DOMContentLoaded', function() {
+
+            // --- 彈出視窗邏輯 (新增) ---
+            const modal = document.getElementById('intro-modal');
+            const closeBtn = document.getElementById('modal-close-btn');
+            const modalKey = 'nightbox_intro_shown';
+            
+            // 檢查 localStorage，如果用戶之前已經看過，則不再彈出
+            if (localStorage.getItem(modalKey) === 'true') {
+                modal.classList.add('modal-hidden');
+            }
+            
+            closeBtn.addEventListener('click', () => {
+                modal.style.opacity = '0';
+                setTimeout(() => {
+                    modal.classList.add('modal-hidden');
+                    // 在 localStorage 紀錄用戶已看過
+                    localStorage.setItem(modalKey, 'true'); 
+                }, 500); // 配合 CSS 隱藏動畫時間
+            });
 
             // 檢查題目庫是否成功載入 (由 questions.js 提供)
             if (typeof truthQuestions === 'undefined' || typeof dareQuestions === 'undefined') {
