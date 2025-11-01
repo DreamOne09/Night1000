@@ -31,6 +31,8 @@
             --glow-green: rgba(57, 255, 20, 0.4);
             --border-color: #333; /* 淺一點的邊框色 */
             --dark-green-glow: rgba(0, 80, 0, 0.4); /* 暗綠色光暈 */
+            --glow-green-strong: rgba(57, 255, 20, 0.6); /* 更強的光暈 */
+            --text-contrast: #ffffff; /* 更亮的文本，用於對比 */
         }
         /* --- 彈出式視窗 (Modal) 樣式 --- */
         #intro-modal {
@@ -156,6 +158,9 @@
             line-height: 1.2;
             color: var(--text-dark);
             text-align: center; /* 確保 h1 居中 */
+            text-shadow: 0 0 25px var(--glow-green-strong), 0 0 10px var(--accent-green); /* 更強烈的光暈 */
+            color: var(--text-dark); /* 確保文本顏色夠亮 */
+            margin-bottom: 0.1em; /* 稍微縮小與h2的間距 */
         }
     
         h2 {
@@ -166,6 +171,8 @@
             font-weight: 300;
             color: var(--text-light);
             text-align: center; /* 確保 h2 居中 */
+            margin-bottom: 2.5rem; /* 稍微縮小與問題框的間距 */
+            color: var(--text-contrast); /* 讓副標題更亮 */
         }
     
         #question-box {
@@ -184,9 +191,13 @@
             border: 1px solid var(--accent-green); /* 邊框改為螢光綠 */
             transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
             position: relative;
+            border: 2px solid var(--accent-green); /* 邊框更粗 */
+            box-shadow: 0 0 50px var(--glow-green-strong), inset 0 0 15px rgba(57, 255, 20, 0.1); /* 更強的光暈與內陰影 */
+            min-height: 200px; /* 增加高度讓它更顯眼 */
+            transition: all 0.4s ease-in-out; /* 更平滑的過渡效果 */
         }
         #question-box:hover {
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 25px var(--accent-green);
+            box-shadow: 0 0 60px var(--accent-green), inset 0 0 20px rgba(57, 255, 20, 0.2);
         }
     
         #question-text {
@@ -196,6 +207,10 @@
             margin: 0;
             color: var(--text-dark);
             text-align: center; /* 題目文本居中 */
+            font-size: clamp(1.4rem, 2.8vw, 2.8rem); /* 題目文字更大 */
+            color: var(--text-contrast); /* 確保文本顏色夠亮 */
+            /* 預設提示文字的動畫效果 */
+            animation: pulseGlow 2s infinite alternate ease-in-out;
         }
     
         #type-text {
@@ -229,10 +244,13 @@
             background-color: var(--accent-green);
             color: var(--primary-bg);
             box-shadow: 0 0 10px rgba(57, 255, 20, 0.6);
+            box-shadow: 0 0 15px var(--glow-green);
         }
     
         .btn:active {
             transform: scale(0.96);
+            transform: scale(0.93); /* 按下時收縮更多 */
+            box-shadow: 0 0 25px var(--glow-green-strong), inset 0 0 10px var(--accent-green); /* 按下時更強烈的發光和內陰影 */
         }
     
         #change-btn {
@@ -278,8 +296,21 @@
             font-size: 1rem;
             color: var(--border-color);
             text-align: center; /* 統計數據文本居中 */
+            margin-top: 3rem; /* 縮小與按鈕的間距 */
+            color: var(--text-light); /* 提高可讀性 */
         }
         #stats p { margin: 0.5rem 0; }
+
+        /* 新增動畫 */
+        @keyframes pulseGlow {
+            from { text-shadow: 0 0 5px var(--glow-green); }
+            to { text-shadow: 0 0 15px var(--glow-green-strong); }
+        }
+        
+        /* 調整 body::after 的透明度，讓背景圖更清晰一些 */
+        body::after {
+            background-color: rgba(0, 0, 0, 0.3); /* 稍微降低透明度，讓背景圖更明顯 */
+        }
     
         @media (max-width: 600px) {
             h1 { font-size: 3rem; }
@@ -290,6 +321,20 @@
             .btn { padding: 12px 20px; font-size: 0.95rem; }
             #button-group { flex-direction: column; gap: 0.8rem; width: 80%; }
         }
+
+        .developer-info {
+            font-size: 0.9em;
+            color: var(--border-color); /* 比 stats 文本稍暗，作為次要資訊 */
+            margin-top: 20px;
+        }
+        .developer-info a {
+            color: var(--accent-green); /* 鏈接使用螢光綠 */
+            text-shadow: 0 0 5px var(--glow-green);
+        }
+        .developer-info a:hover {
+            text-decoration: underline;
+        }
+        
     </style>
 </head>
 <body>
@@ -299,11 +344,11 @@
             <h3>真心話還是大冒險？</h3>
     
             <p>
-                **遊戲規則：** 選擇真心話，那你就要勇敢地說出口；如果是大冒險，那你抽到題目只好付諸行動！
+                遊戲規則： 選擇真心話，那你就要勇敢地說出口；如果是大冒險，那你抽到題目就要付諸行動！
             </p>
     
             <p>
-                **關於網站：** 這個網站收納了**超過一千題**題庫，透過這些問題，無論是在酒吧跟新朋友喝酒，還是老友們單純想殺時間，你都能更深入地了解你的親朋好友們！
+                關於網站： 這個網站收納了超過一千題題庫，透過這些問題，無論是在酒吧跟新朋友喝酒，還是老友們單純想殺時間，你都能更深入地了解你的親朋好友們！
             </p>
             
             <p class="dev-note">
@@ -335,6 +380,7 @@
     <div id="stats">
         <p>題庫總數：真心話 <span id="truth-count">0</span> 題 / 大冒險 <span id="dare-count">0</span> 題</p>
         <p><span id="usage-stats">(未開始抽取)</span></p>
+        <p class="developer-info">由 <a href="https://dreamone.li" target="_blank" style="color: var(--accent-green); text-decoration: none;">DreamOne</a> Vibe Coding開發</p>
         <p>歡迎捐款至中華郵政 700 帳號 0081181 0422722</p>
     </div>
 
