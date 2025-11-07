@@ -407,7 +407,10 @@
 
         // --- 1. 題目庫 (從 questions.js 複製到此處) ---
 
-        const truthQuestions = [
+        // 使用 DOMContentLoaded 確保 DOM 結構已準備好
+        document.addEventListener('DOMContentLoaded', function() {
+
+                    const truthQuestions = [
             "你認為男人善變還是女人善變？說說你的觀察。",
             "你的初吻是幾歲？在哪裡？被誰奪走？詳情如何？",
             "到目前為止，你做過最瘋狂的關於愛情的決定或事情是？",
@@ -1439,35 +1442,11 @@
             "用你的身體做一個『數字 2』的形狀。",
         ];
 
-        // --- 2. 遊戲邏輯 (原生 JavaScript) ---
-
-        // 使用 DOMContentLoaded 確保 DOM 結構已準備好
-        document.addEventListener('DOMContentLoaded', function() {
-
             // --- 彈出視窗邏輯 (新增) ---
             const modal = document.getElementById('intro-modal');
-            const closeBtn = document.getElementById('modal-close-btn');
-            const modalKey = 'nightbox_intro_shown';
-            
-            // 檢查 localStorage，如果用戶之前已經看過，則不再彈出
-            if (localStorage.getItem(modalKey) === 'true') {
-                modal.classList.add('modal-hidden');
-            }
-            
-            closeBtn.addEventListener('click', () => {
-                modal.style.opacity = '0';
-                setTimeout(() => {
-                    modal.classList.add('modal-hidden');
-                    // 在 localStorage 紀錄用戶已看過
-                    localStorage.setItem(modalKey, 'true'); 
-                }, 500); // 配合 CSS 隱藏動畫時間
-            });
-
-            // 檢查題目庫是否成功載入 (由 questions.js 提供)
-            if (typeof truthQuestions === 'undefined' || typeof dareQuestions === 'undefined') {
-                document.getElementById('question-text').textContent = '錯誤：未能載入題目庫 (questions.js)。請確認檔案名稱、路徑是否正確（大小寫需完全一致）並清除緩存。';
-                return; // 終止執行，避免錯誤傳播
-            }
+                        ...
+                            }, 500); // 配合 CSS 隱藏動畫時間
+                        });
 
             let currentType = ''; 
             let usedTruthIndices = [];
