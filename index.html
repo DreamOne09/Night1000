@@ -777,7 +777,7 @@
             "你最喜歡哪個歷史人物？",
             "你覺得自己對政治的關注度如何？",
             "你最喜歡聽哪種音樂？",
-            "你上一次假裝自己很開心，？",
+            "你上一次假裝自己很開心是甚麼時候？",
             "你最想學會的語言是什麼？",
             "你認為對一個不熟的人，要如何才能開始一段深度對話？",
             "你最近一次發脾氣是什麼時候？為什麼？",
@@ -1475,6 +1475,10 @@
                 dareCount: document.getElementById('dare-count'),
                 usageStats: document.getElementById('usage-stats')
             };
+
+            let currentType = null;       // 追蹤目前是真心話還是大冒險
+            let usedTruthIndices = [];  // 追蹤已使用過的「真心話」題目
+            let usedDareIndices = [];   // 追蹤已使用過的「大冒險」題目
 
             // 初始化統計數字
             elements.truthCount.textContent = truthQuestions.length;
