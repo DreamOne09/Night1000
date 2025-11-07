@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
@@ -826,7 +826,7 @@
             "你覺得自己最大的缺點是什麼？",
             "你最喜歡看哪種電視節目或劇集？",
             "你覺得自己對愛情的態度是開放還是保守？",
-            "你有約炮過嗎？'",
+            "你有約炮過嗎？",
             "你覺得人生最重要的一課是什麼？",
             "請分享一段自己最可惜的感情經歷。",
             "你覺得自己有沒有「職業倦怠」？",
@@ -1442,12 +1442,25 @@
             "用你的身體做一個『數字 2』的形狀。",
         ];
 
-            // --- 彈出視窗邏輯 (新增) ---
-            const modal = document.getElementById('intro-modal');
-            
-            let currentType = ''; 
-            let usedTruthIndices = [];
-            let usedDareIndices = [];
+            // --- 彈出視窗邏輯 (這段是正確的) ---
+            const modal = document.getElementById('intro-modal');
+            const closeBtn = document.getElementById('modal-close-btn');
+            const modalKey = 'nightbox_intro_shown';
+            
+            // 檢查 localStorage，如果用戶之前已經看過，則不再彈出
+            if (localStorage.getItem(modalKey) === 'true') {
+                modal.classList.add('modal-hidden');
+            }
+            
+            // 幫按鈕綁定關閉功能 (這就是卡住時沒有執行的部分)
+            closeBtn.addEventListener('click', () => {
+                modal.style.opacity = '0';
+                setTimeout(() => {
+                    modal.classList.add('modal-hidden');
+                    // 在 localStorage 紀錄用戶已看過
+                    localStorage.setItem(modalKey, 'true'); 
+                }, 500); // 配合 CSS 隱藏動畫時間
+            });
             
             // 獲取 DOM 元素
             const elements = {
