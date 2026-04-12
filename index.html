@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="NightBox 1000：專為夜晚聚會設計的真心話大冒險題庫，1000 題派對向、辛辣好笑、可自訂安全範圍。Web3 Vibe 風格，立即抽取題目！">
     <meta name="keywords" content="真心話大冒險, NightBox, 派對遊戲, 情感, 題庫, web3, Vibe Coding, 遊戲題目, 情侶對話, 深度夜聊">
     <meta name="robots" content="index, follow">
@@ -35,6 +35,8 @@
             --glow-truth: rgba(0, 245, 212, 0.45);
             --accent-dare: #ff6b35;
             --glow-dare: rgba(255, 107, 53, 0.45);
+            --accent-warn: #ffd60a;
+            --surface-elevated: rgba(26, 26, 26, 0.92);
         }
         .sr-only {
             position: absolute;
@@ -364,13 +366,16 @@
         }
     
         @media (max-width: 600px) {
-            h1 { font-size: 3rem; }
-            h2 { font-size: 1.2rem; margin-bottom: 2rem; }
-            #question-box { padding: 2rem 1.5rem; min-height: 120px; margin-bottom: 2.5rem; }
-            #question-text { font-size: 1.1rem; }
-            #type-text { font-size: 1rem; }
-            .btn { padding: 12px 20px; font-size: 0.95rem; }
-            #button-group { flex-direction: column; gap: 0.8rem; width: 80%; }
+            h1 { font-size: 2.35rem; letter-spacing: 0.08em; }
+            h2 { font-size: 1.15rem; margin-bottom: 1.5rem; padding: 0 0.5rem; line-height: 1.45; }
+            #question-box { padding: 1.35rem 1.1rem; min-height: 140px; margin-bottom: 1.5rem; max-width: 96%; }
+            #question-text { font-size: 1.05rem; line-height: 1.65; }
+            #type-text { font-size: 0.92rem; }
+            .btn { padding: 14px 18px; font-size: 1rem; min-height: 48px; width: 100%; max-width: 100%; }
+            #button-group { flex-direction: column; gap: 0.65rem; width: 92%; max-width: 420px; margin-left: auto; margin-right: auto; }
+            #control-bar { max-width: 96%; padding: 0.85rem 0.75rem; }
+            #feedback-row { justify-content: stretch; }
+            #feedback-row .feedback-btn { flex: 1 1 30%; }
         }
 
         .developer-info {
@@ -384,6 +389,117 @@
         }
         .developer-info a:hover {
             text-decoration: underline;
+        }
+
+        /* 2.0：尺度篩選、回饋（手機優先） */
+        #control-bar {
+            max-width: 92%;
+            width: 100%;
+            margin: 0 auto 1.25rem;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border-color);
+            box-sizing: border-box;
+        }
+        .control-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.6rem 0.75rem;
+            justify-content: center;
+        }
+        .control-row label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        #spice-select {
+            flex: 1 1 160px;
+            min-height: 44px;
+            padding: 0.4rem 0.65rem;
+            border-radius: 8px;
+            border: 1px solid var(--accent-green);
+            background: var(--primary-bg);
+            color: var(--text-contrast);
+            font-size: 1rem;
+        }
+        #feedback-row {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .feedback-btn {
+            min-height: 44px;
+            min-width: 44px;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            border: 2px solid var(--border-color);
+            background: var(--secondary-bg);
+            color: var(--text-contrast);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .feedback-btn-good {
+            border-color: var(--accent-truth);
+            color: var(--accent-truth);
+        }
+        .feedback-btn-good:active {
+            box-shadow: 0 0 16px var(--glow-truth);
+        }
+        .feedback-btn-bad {
+            border-color: var(--accent-dare);
+            color: var(--accent-dare);
+        }
+        .feedback-btn-bad:active {
+            box-shadow: 0 0 16px var(--glow-dare);
+        }
+        #spice-badge {
+            display: inline-block;
+            margin-left: 0.35rem;
+            padding: 0.15rem 0.45rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            vertical-align: middle;
+            border: 1px solid var(--border-color);
+            color: var(--accent-warn);
+        }
+        #toast {
+            position: fixed;
+            left: 50%;
+            bottom: max(1.25rem, env(safe-area-inset-bottom));
+            transform: translateX(-50%) translateY(120%);
+            z-index: 2000;
+            padding: 0.65rem 1.25rem;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.88);
+            color: var(--text-contrast);
+            border: 1px solid var(--accent-green);
+            font-size: 0.95rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.35s ease, opacity 0.35s ease;
+            max-width: 90vw;
+            text-align: center;
+        }
+        #toast.toast-visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        #feedback-stats {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.35rem;
+            text-align: center;
+            width: 100%;
+        }
+        main.page-wrap {
+            padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
         }
         
     </style>
@@ -403,7 +519,10 @@
             </p>
 
             <p>
-                不滿意題目？按「換一題」或再抽一次即可。
+                2.0：可選尺度篩選（輕鬆／一般／辛辣）；「好題／爛題」僅存於你的手機，方便之後整理，不會上傳伺服器。
+            </p>
+            <p>
+                不滿意題目？按「換一題」即可，開心最重要。
             </p>
             
             <p class="dev-note">
@@ -417,14 +536,33 @@
     </div>
     
 
+    <main class="page-wrap">
     <h1>NightBox 1000</h1>
     <h2>三五好友一起玩真心話大冒險</h2>
+
+    <div id="control-bar" aria-label="尺度與回饋">
+        <div class="control-row">
+            <label for="spice-select">尺度篩選</label>
+            <select id="spice-select" title="只抽符合尺度的題目">
+                <option value="3">辛辣（含一般、輕鬆）</option>
+                <option value="2" selected>一般（含輕鬆）</option>
+                <option value="1">輕鬆</option>
+            </select>
+        </div>
+        <p id="feedback-stats" class="sr-only" aria-live="polite"></p>
+        <div id="feedback-row" class="control-row">
+            <span class="sr-only" id="feedback-hint">為目前題目評分（存於本機，不上傳）</span>
+            <button type="button" class="feedback-btn feedback-btn-good" id="feedback-good" aria-describedby="feedback-hint">好題</button>
+            <button type="button" class="feedback-btn feedback-btn-bad" id="feedback-bad" aria-describedby="feedback-hint">爛題</button>
+            <button type="button" class="feedback-btn" id="feedback-export" title="複製 JSON 到剪貼簿">匯出回饋</button>
+        </div>
+    </div>
 
     <div id="question-box">
         <p id="question-text">點擊下方按鈕開始遊戲吧！</p>
     </div>
 
-    <p id="type-text" style="opacity: 0;">— 這是 **<span id="type-label">真心話</span>** 題目 —</p>
+    <p id="type-text" style="opacity: 0;">— 這是 **<span id="type-label">真心話</span>** 題目<span id="spice-badge-wrap" style="display:none;"> · <span id="spice-badge"></span></span> —</p>
 
     <div id="button-group">
         <button type="button" id="change-btn" class="btn">換一題</button>
@@ -439,6 +577,9 @@
         <p class="developer-info">由 <a href="https://dreamone.li" target="_blank" style="color: var(--accent-green); text-decoration: none;">DreamOne</a> Vibe Coding開發</p>
         <p>歡迎捐款至中華郵政 700 帳號 0081181 0422722</p>
     </div>
+    </main>
+
+    <div id="toast" role="status" aria-live="polite"></div>
 
     <div id="seo-content-cache" style="position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden;">
     <h1>NightBox 1000 終極真心話大冒險題庫全集</h1>
@@ -458,6 +599,7 @@
     </div>
 
     <script src="question.js"></script>
+    <script src="question-meta.js"></script>
     <script>
 
         // 題目庫：question.js（truthQuestions / dareQuestions）
@@ -497,12 +639,73 @@
                 questionBox: document.getElementById('question-box'),
                 truthCount: document.getElementById('truth-count'),
                 dareCount: document.getElementById('dare-count'),
-                usageStats: document.getElementById('usage-stats')
+                usageStats: document.getElementById('usage-stats'),
+                spiceSelect: document.getElementById('spice-select'),
+                spiceBadge: document.getElementById('spice-badge'),
+                spiceBadgeWrap: document.getElementById('spice-badge-wrap'),
+                feedbackGood: document.getElementById('feedback-good'),
+                feedbackBad: document.getElementById('feedback-bad'),
+                feedbackExport: document.getElementById('feedback-export'),
+                feedbackStats: document.getElementById('feedback-stats'),
+                toast: document.getElementById('toast')
             };
 
-            let currentType = null;       // 追蹤目前是真心話還是大冒險
-            let usedTruthIndices = [];  // 追蹤已使用過的「真心話」題目
-            let usedDareIndices = [];   // 追蹤已使用過的「大冒險」題目
+            let currentType = null;
+            let usedTruthIndices = [];
+            let usedDareIndices = [];
+            let currentQuestionIndex = -1;
+
+            const LS_FEEDBACK = 'nightbox_feedback_v1';
+
+            function loadFeedback() {
+                try {
+                    const raw = localStorage.getItem(LS_FEEDBACK);
+                    if (!raw) {
+                        return { goodTruth: [], badTruth: [], goodDare: [], badDare: [] };
+                    }
+                    const o = JSON.parse(raw);
+                    return {
+                        goodTruth: o.goodTruth || [],
+                        badTruth: o.badTruth || [],
+                        goodDare: o.goodDare || [],
+                        badDare: o.badDare || []
+                    };
+                } catch (e) {
+                    return { goodTruth: [], badTruth: [], goodDare: [], badDare: [] };
+                }
+            }
+
+            function saveFeedback(fb) {
+                localStorage.setItem(LS_FEEDBACK, JSON.stringify(fb));
+            }
+
+            function showToast(msg) {
+                elements.toast.textContent = msg;
+                elements.toast.classList.add('toast-visible');
+                clearTimeout(showToast._t);
+                showToast._t = setTimeout(() => elements.toast.classList.remove('toast-visible'), 2200);
+            }
+
+            function updateFeedbackStatsLine() {
+                const fb = loadFeedback();
+                const g = (currentType === 'truth' ? fb.goodTruth.length : fb.goodDare.length)
+                    + (currentType === 'truth' ? fb.badTruth.length : fb.badDare.length);
+                if (g > 0 && currentType) {
+                    elements.feedbackStats.textContent = `本機已記錄 ${g} 筆回饋（${currentType === 'truth' ? '真心話' : '大冒險'}）`;
+                    elements.feedbackStats.classList.remove('sr-only');
+                } else {
+                    elements.feedbackStats.textContent = '';
+                    elements.feedbackStats.classList.add('sr-only');
+                }
+            }
+
+            function getMaxSpice() {
+                return parseInt(elements.spiceSelect.value, 10) || 2;
+            }
+
+            function matchesSpice(level, maxSpice) {
+                return level <= maxSpice;
+            }
 
             // 初始化統計數字
             elements.truthCount.textContent = truthQuestions.length;
@@ -518,67 +721,87 @@
                 if (currentType === 'dare') elements.questionBox.classList.add('q-dare');
             }
 
-            /**
-             * 隨機獲取新題目
-             */
-            function getNewQuestion(type) {
-                const questionList = type === 'truth' ? truthQuestions : dareQuestions;
-                let usedIndices = type === 'truth' ? usedTruthIndices : usedDareIndices;
-                
-                if (usedIndices.length === questionList.length) {
-                    usedIndices.length = 0;
-                    alert(`${type === 'truth' ? '真心話' : '大冒險'} 題庫已全部抽取完畢，將重置計數！`);
-                }
-
-                let randomIndex;
-                do {
-                    randomIndex = Math.floor(Math.random() * questionList.length);
-                } while (usedIndices.includes(randomIndex));
-
-                usedIndices.push(randomIndex);
-
-                // 更新使用的索引 (確保全域變數被正確修改)
-                if (type === 'truth') {
-                    usedTruthIndices = usedIndices;
-                } else {
-                    usedDareIndices = usedIndices;
-                }
-                
-                return questionList[randomIndex];
+            function spiceLabel(lv) {
+                if (lv === 1) return '輕鬆';
+                if (lv === 2) return '一般';
+                return '辛辣';
             }
 
-            /**
-             * 處理按鈕點擊事件 (切換或換題)
-             */
+            function getNewQuestion(type) {
+                const questionList = type === 'truth' ? truthQuestions : dareQuestions;
+                const levels = type === 'truth' ? truthQuestionLevels : dareQuestionLevels;
+                let usedIndices = type === 'truth' ? usedTruthIndices : usedDareIndices;
+                const maxSpice = getMaxSpice();
+
+                function candidates() {
+                    const out = [];
+                    for (let i = 0; i < questionList.length; i++) {
+                        if (!matchesSpice(levels[i], maxSpice)) continue;
+                        if (!usedIndices.includes(i)) out.push(i);
+                    }
+                    return out;
+                }
+
+                let pool = candidates();
+                if (pool.length === 0) {
+                    usedIndices.length = 0;
+                    pool = candidates();
+                    if (pool.length === 0) {
+                        for (let i = 0; i < questionList.length; i++) {
+                            if (!usedIndices.includes(i)) pool.push(i);
+                        }
+                    }
+                    if (pool.length === 0) {
+                        usedIndices.length = 0;
+                        pool = Array.from({ length: questionList.length }, (_, i) => i);
+                    }
+                    showToast('此尺度下可抽題已輪完，已重新循環');
+                }
+
+                const randomIndex = pool[Math.floor(Math.random() * pool.length)];
+                usedIndices.push(randomIndex);
+                if (type === 'truth') usedTruthIndices = usedIndices;
+                else usedDareIndices = usedIndices;
+
+                currentQuestionIndex = randomIndex;
+                return { text: questionList[randomIndex], level: levels[randomIndex] };
+            }
+
             function handleNextQuestion(newType) {
                 currentType = newType;
 
-                // 1. 動畫效果：題目淡出
                 elements.questionBox.style.opacity = '0';
                 elements.questionBox.style.transform = 'scale(0.95)';
                 elements.typeText.style.opacity = '0';
 
                 setTimeout(() => {
-                    // 2. 抽取新題目
-                    const newQuestion = getNewQuestion(currentType);
-                    elements.questionText.textContent = newQuestion;
+                    const picked = getNewQuestion(currentType);
+                    elements.questionText.textContent = picked.text;
 
-                    // 3. 更新介面顯示
                     elements.changeBtn.style.display = 'inline-block';
-                    
+
                     elements.typeText.style.opacity = '1';
                     elements.typeText.className = currentType === 'truth' ? 'type-truth' : 'type-dare';
                     elements.typeLabel.textContent = currentType === 'truth' ? '真心話' : '大冒險';
+                    if (picked.level != null) {
+                        elements.spiceBadge.textContent = 'Lv.' + picked.level + ' ' + spiceLabel(picked.level);
+                        elements.spiceBadgeWrap.style.display = 'inline';
+                    }
                     updateModeUI();
 
-                    // 統計數字
-                    const currentUsed = currentType === 'truth' ? usedTruthIndices.length : usedDareIndices.length;
+                    const usedArr = currentType === 'truth' ? usedTruthIndices : usedDareIndices;
                     const total = currentType === 'truth' ? truthQuestions.length : dareQuestions.length;
-                    elements.usageStats.textContent = `(${currentType === 'truth' ? '真心話' : '大冒險'} 已抽取 ${currentUsed} / ${total} 題)`;
+                    const maxSpice = getMaxSpice();
+                    const levels = currentType === 'truth' ? truthQuestionLevels : dareQuestionLevels;
+                    let inBand = 0;
+                    for (let i = 0; i < levels.length; i++) {
+                        if (matchesSpice(levels[i], maxSpice)) inBand++;
+                    }
+                    elements.usageStats.textContent = `(${currentType === 'truth' ? '真心話' : '大冒險'} 本輪已抽 ${usedArr.length}／符合尺度約 ${inBand} 題／全庫 ${total} 題)`;
 
-                    // 4. 動畫效果：題目淡入並恢復
                     elements.questionBox.style.opacity = '1';
                     elements.questionBox.style.transform = 'scale(1)';
+                    updateFeedbackStatsLine();
                 }, 300);
             }
 
@@ -628,6 +851,48 @@
                     handleNextQuestion(currentType);
                 }
             });
+
+            function recordFeedback(kind) {
+                if (currentQuestionIndex < 0 || !currentType) {
+                    showToast('先抽一題再評分');
+                    return;
+                }
+                const fb = loadFeedback();
+                const goodKey = currentType === 'truth' ? 'goodTruth' : 'goodDare';
+                const badKey = currentType === 'truth' ? 'badTruth' : 'badDare';
+                const target = kind === 'good' ? goodKey : badKey;
+                const other = kind === 'good' ? badKey : goodKey;
+                if (!fb[target].includes(currentQuestionIndex)) fb[target].push(currentQuestionIndex);
+                fb[other] = fb[other].filter((i) => i !== currentQuestionIndex);
+                saveFeedback(fb);
+                showToast(kind === 'good' ? '已記：好題（存本機）' : '已記：爛題（存本機）');
+                updateFeedbackStatsLine();
+            }
+
+            elements.feedbackGood.addEventListener('click', () => recordFeedback('good'));
+            elements.feedbackBad.addEventListener('click', () => recordFeedback('bad'));
+            elements.feedbackExport.addEventListener('click', () => {
+                const payload = Object.assign(loadFeedback(), {
+                    exportedAt: new Date().toISOString(),
+                    note: '索引對應 question.js 同類型題序（0 起算）'
+                });
+                const text = JSON.stringify(payload, null, 2);
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(() => showToast('已複製 JSON 到剪貼簿'));
+                } else {
+                    showToast(JSON.stringify(payload));
+                }
+            });
+
+            elements.spiceSelect.addEventListener('change', () => {
+                if (currentType) {
+                    usedTruthIndices = [];
+                    usedDareIndices = [];
+                    handleNextQuestion(currentType);
+                }
+            });
+
+            updateFeedbackStatsLine();
         });
         
     </script>

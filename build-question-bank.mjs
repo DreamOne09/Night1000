@@ -8,11 +8,39 @@ const HEADER = `/**
  * NightBox 題庫
  * 題目總數：1000 題（真心話 500、大冒險 500）
  * 語言：繁體中文
+ * 尺度：每題 1（輕鬆）／2（一般）／3（辛辣），見 question-meta.js；抽題時可篩選
  * 風格：熟人或想變熟；2.0 篩選：前段約半數改為「說一個…」故事題，尾段為 tail-manual-pool 人工池
  * 大冒險：多組口吻×任務×秒數組合去重；須同意、可換人改題
  */
 
 `;
+
+/** 1=輕鬆閒聊 2=一般派對 3=較辛辣／身體／親密；由關鍵字推斷，可事後人工覆寫 question-meta.js */
+function inferTruthLevel(q) {
+  const s = q;
+  if (
+    /性行為|口交|裸體|裸奔|內褲|罩杯|胸圍|春夢|避孕|謎片|成人片|一夜情|炮友|舌吻|做愛|上床|高潮|出軌|第三者|意淫|保險套|硬\/濕|親密行為|自慰|手淫|為另一半「口」|初夜/.test(
+      s,
+    )
+  ) {
+    return 3;
+  }
+  if (
+    /最喜歡的食物|最喜歡的季節|最喜歡的三個顏色|最喜歡的書|最喜歡的電影|四個字形容|廁紙|指頭挖鼻子|放的屁|鬼怪或者神靈|最喜歡哪部電影/.test(
+      s,
+    )
+  ) {
+    return 1;
+  }
+  return 2;
+}
+
+function inferDareLevel(q) {
+  const s = q;
+  if (/相簿第|私密|親吻|接吻|摸|脫|裸|舌吻|吻痕|餵食|情侶合照|擊掌後對視|對視/.test(s)) return 3;
+  if (/成語|動物叫|拍手|走秀|誇張稱讚|頒獎|征友|新聞跑馬燈|購物台/.test(s)) return 1;
+  return 2;
+}
 
 function uniquePush(arr, set, s) {
   if (!s || set.has(s)) return;
@@ -157,7 +185,8 @@ function buildDareQuestions() {
 
 const truthHeadPath = new URL("./question-truth-head.txt", import.meta.url);
 /** 去掉最後一題結尾逗號，避免與下方銜接時變成 ",," 產生空元素 */
-const truthHead = readFileSync(truthHeadPath, "utf8").trimEnd().replace(/,\s*$/, "");
+const truthHeadRaw = readFileSync(truthHeadPath, "utf8").trimEnd().replace(/,\s*$/, "");
+const truthHeadQs = extractQuestionsFromSource(readFileSync(truthHeadPath, "utf8"));
 
 const truthTail = buildTruthTail();
 const dareList = buildDareQuestions();
@@ -169,13 +198,41 @@ if (dareList.length !== 500) {
   throw new Error(`dare expected 500, got ${dareList.length}`);
 }
 
+const truthFull = truthHeadQs.concat(truthTail);
+if (truthFull.length !== 500) {
+  throw new Error(`truth full expected 500, got ${truthFull.length}`);
+}
+
+const truthQuestionLevels = truthFull.map(inferTruthLevel);
+const dareQuestionLevels = dareList.map(inferDareLevel);
+
 function formatArray(name, items) {
   const lines = items.map((q) => "    " + JSON.stringify(q));
   return `const ${name} = [\n${lines.join(",\n")}\n];`;
 }
 
+function formatNumArray(name, items) {
+  const lines = items.map((n) => "    " + n);
+  return `const ${name} = [\n${lines.join(",\n")}\n];`;
+}
+
+const META_HEADER = `/**
+ * NightBox 題目尺度（與 question.js 題序對應）
+ * 1=輕鬆 2=一般 3=辛辣；由建置腳本推斷，可手動編輯此檔後不需改題文
+ */
+`;
+
+const metaBody =
+  META_HEADER +
+  formatNumArray("truthQuestionLevels", truthQuestionLevels) +
+  "\n" +
+  formatNumArray("dareQuestionLevels", dareQuestionLevels) +
+  "\n";
+
+writeFileSync(new URL("./question-meta.js", import.meta.url), metaBody, "utf8");
+
 const body = [
-  truthHead + ",",
+  truthHeadRaw + ",",
   "    // --- 真心話補充：熟人／想變熟；具體情境、故事、好玩（請在彼此同意下遊玩） ---",
   ...truthTail.map((q) => "    " + JSON.stringify(q) + ","),
   "];",
@@ -185,7 +242,7 @@ const body = [
 ].join("\n");
 
 writeFileSync(new URL("./question.js", import.meta.url), HEADER + body + "\n", "utf8");
-console.log("Wrote question.js", {
-  truth: 225 + truthTail.length,
+console.log("Wrote question.js + question-meta.js", {
+  truth: truthFull.length,
   dare: dareList.length,
 });
