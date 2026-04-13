@@ -365,7 +365,7 @@
             background-color: rgba(0, 0, 0, 0.3); /* 稍微降低透明度，讓背景圖更明顯 */
         }
     
-        @media (max-width: 600px) {
+            @media (max-width: 600px) {
             h1 { font-size: 2.35rem; letter-spacing: 0.08em; }
             h2 { font-size: 1.15rem; margin-bottom: 1.5rem; padding: 0 0.5rem; line-height: 1.45; }
             #question-box { padding: 1.35rem 1.1rem; min-height: 140px; margin-bottom: 1.5rem; max-width: 96%; }
@@ -374,6 +374,8 @@
             .btn { padding: 14px 18px; font-size: 1rem; min-height: 48px; width: 100%; max-width: 100%; }
             #button-group { flex-direction: column; gap: 0.65rem; width: 92%; max-width: 420px; margin-left: auto; margin-right: auto; }
             #control-bar { max-width: 96%; padding: 0.85rem 0.75rem; }
+            .control-hint { font-size: 0.72rem; padding: 0 0.25rem; }
+            .seg-btn { font-size: 0.82rem; min-height: 46px; }
             #feedback-row { justify-content: stretch; }
             #feedback-row .feedback-btn { flex: 1 1 30%; }
         }
@@ -396,11 +398,12 @@
             max-width: 92%;
             width: 100%;
             margin: 0 auto 1.25rem;
-            padding: 0.75rem 1rem;
-            border-radius: 12px;
+            padding: 0.85rem 1rem 1rem;
+            border-radius: 14px;
             background: var(--surface-elevated);
             border: 1px solid var(--border-color);
             box-sizing: border-box;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
         }
         .control-row {
             display: flex;
@@ -414,6 +417,14 @@
             font-size: 0.9rem;
             white-space: nowrap;
         }
+        .control-hint {
+            width: 100%;
+            margin: 0;
+            font-size: 0.78rem;
+            line-height: 1.45;
+            color: var(--border-color);
+            text-align: center;
+        }
         #spice-select {
             flex: 1 1 160px;
             min-height: 44px;
@@ -423,6 +434,47 @@
             background: var(--primary-bg);
             color: var(--text-contrast);
             font-size: 1rem;
+        }
+        /* 方向：混合／A／B */
+        .direction-seg {
+            display: flex;
+            flex-wrap: nowrap;
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 4px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border-color);
+            gap: 4px;
+            box-sizing: border-box;
+        }
+        .seg-btn {
+            flex: 1 1 0;
+            min-height: 44px;
+            padding: 0.45rem 0.5rem;
+            border: none;
+            border-radius: 9px;
+            background: transparent;
+            color: var(--text-light);
+            font-size: 0.88rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        }
+        .seg-btn:hover {
+            color: var(--text-contrast);
+            background: rgba(57, 255, 20, 0.08);
+        }
+        .seg-btn:focus-visible {
+            outline: 2px solid var(--accent-green);
+            outline-offset: 2px;
+        }
+        .seg-btn.seg-active {
+            background: var(--accent-green);
+            color: var(--primary-bg);
+            box-shadow: 0 0 14px var(--glow-green);
         }
         #feedback-row {
             margin-top: 0.75rem;
@@ -519,7 +571,7 @@
             </p>
 
             <p>
-                2.0：可選尺度篩選（輕鬆／一般／辛辣）；「好題／爛題」僅存於你的手機，方便之後整理，不會上傳伺服器。
+                2.0：可選尺度（輕鬆／一般／辛辣）與方向（混合／方向 A／方向 B，由關鍵字自動分袋，之後可人工微調）；「好題／爛題」僅存於本機，方便整理，不會上傳伺服器。
             </p>
             <p>
                 不滿意題目？按「換一題」即可，開心最重要。
@@ -540,14 +592,25 @@
     <h1>NightBox 1000</h1>
     <h2>三五好友一起玩真心話大冒險</h2>
 
-    <div id="control-bar" aria-label="尺度與回饋">
+    <div id="control-bar" aria-label="尺度、方向與回饋">
         <div class="control-row">
-            <label for="spice-select">尺度篩選</label>
+            <label for="spice-select">尺度</label>
             <select id="spice-select" title="只抽符合尺度的題目">
                 <option value="3">辛辣（含一般、輕鬆）</option>
                 <option value="2" selected>一般（含輕鬆）</option>
                 <option value="1">輕鬆</option>
             </select>
+        </div>
+        <p class="control-hint" id="direction-hint">
+            方向 A／B 為自動分類：真心話 A 偏關係與故事、B 偏身體與親密；大冒險 A 偏單人表演、B 偏現場互動。可之後逐題校正。
+        </p>
+        <div class="control-row" style="margin-top: 0.65rem;">
+            <span class="sr-only" id="dir-label">題目方向</span>
+            <div class="direction-seg" role="group" aria-labelledby="dir-label">
+                <button type="button" class="seg-btn seg-active" id="dir-mix" data-dir="mix" aria-pressed="true" title="兩個方向都會抽到">混合</button>
+                <button type="button" class="seg-btn" id="dir-a" data-dir="a" aria-pressed="false" title="真心話：關係／故事；大冒險：單人表演">方向 A</button>
+                <button type="button" class="seg-btn" id="dir-b" data-dir="b" aria-pressed="false" title="真心話：身體／親密；大冒險：與現場互動">方向 B</button>
+            </div>
         </div>
         <p id="feedback-stats" class="sr-only" aria-live="polite"></p>
         <div id="feedback-row" class="control-row">
@@ -647,10 +710,15 @@
                 feedbackBad: document.getElementById('feedback-bad'),
                 feedbackExport: document.getElementById('feedback-export'),
                 feedbackStats: document.getElementById('feedback-stats'),
-                toast: document.getElementById('toast')
+                toast: document.getElementById('toast'),
+                dirMix: document.getElementById('dir-mix'),
+                dirA: document.getElementById('dir-a'),
+                dirB: document.getElementById('dir-b')
             };
 
             let currentType = null;
+            /** @type {'mix'|'a'|'b'} */
+            let currentDir = 'mix';
             let usedTruthIndices = [];
             let usedDareIndices = [];
             let currentQuestionIndex = -1;
@@ -707,6 +775,48 @@
                 return level <= maxSpice;
             }
 
+            function matchesDir(dirBit, mode) {
+                if (mode === 'mix') return true;
+                if (mode === 'a') return dirBit === 0;
+                return dirBit === 1;
+            }
+
+            function truthDirsFallback() {
+                return typeof truthQuestionDirs !== 'undefined'
+                    ? truthQuestionDirs
+                    : truthQuestions.map(function () { return 0; });
+            }
+            function dareDirsFallback() {
+                return typeof dareQuestionDirs !== 'undefined'
+                    ? dareQuestionDirs
+                    : dareQuestions.map(function () { return 0; });
+            }
+
+            function updateDirSegUI() {
+                const map = { mix: elements.dirMix, a: elements.dirA, b: elements.dirB };
+                Object.keys(map).forEach(function (k) {
+                    const btn = map[k];
+                    if (!btn) return;
+                    const on = k === currentDir;
+                    btn.classList.toggle('seg-active', on);
+                    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+                });
+            }
+
+            function countFiltered(type) {
+                const questionList = type === 'truth' ? truthQuestions : dareQuestions;
+                const levels = type === 'truth' ? truthQuestionLevels : dareQuestionLevels;
+                const dirs = type === 'truth' ? truthDirsFallback() : dareDirsFallback();
+                const maxSpice = getMaxSpice();
+                let n = 0;
+                for (let i = 0; i < questionList.length; i++) {
+                    if (!matchesSpice(levels[i], maxSpice)) continue;
+                    if (!matchesDir(dirs[i], currentDir)) continue;
+                    n++;
+                }
+                return n;
+            }
+
             // 初始化統計數字
             elements.truthCount.textContent = truthQuestions.length;
             elements.dareCount.textContent = dareQuestions.length;
@@ -730,10 +840,21 @@
             function getNewQuestion(type) {
                 const questionList = type === 'truth' ? truthQuestions : dareQuestions;
                 const levels = type === 'truth' ? truthQuestionLevels : dareQuestionLevels;
+                const dirs = type === 'truth' ? truthDirsFallback() : dareDirsFallback();
                 let usedIndices = type === 'truth' ? usedTruthIndices : usedDareIndices;
                 const maxSpice = getMaxSpice();
 
                 function candidates() {
+                    const out = [];
+                    for (let i = 0; i < questionList.length; i++) {
+                        if (!matchesSpice(levels[i], maxSpice)) continue;
+                        if (!matchesDir(dirs[i], currentDir)) continue;
+                        if (!usedIndices.includes(i)) out.push(i);
+                    }
+                    return out;
+                }
+
+                function poolSpiceOnly() {
                     const out = [];
                     for (let i = 0; i < questionList.length; i++) {
                         if (!matchesSpice(levels[i], maxSpice)) continue;
@@ -743,19 +864,46 @@
                 }
 
                 let pool = candidates();
+                let toastMsg = '';
+
                 if (pool.length === 0) {
                     usedIndices.length = 0;
                     pool = candidates();
-                    if (pool.length === 0) {
-                        for (let i = 0; i < questionList.length; i++) {
-                            if (!usedIndices.includes(i)) pool.push(i);
-                        }
+                    if (pool.length > 0) {
+                        toastMsg = '此篩選下可抽題已輪完，已重新循環';
                     }
-                    if (pool.length === 0) {
-                        usedIndices.length = 0;
-                        pool = Array.from({ length: questionList.length }, (_, i) => i);
+                }
+
+                if (pool.length === 0 && currentDir !== 'mix') {
+                    pool = poolSpiceOnly();
+                    if (pool.length > 0) {
+                        toastMsg = '此方向題目已抽完或過少，已改為符合尺度即可（兩方向）';
                     }
-                    showToast('此尺度下可抽題已輪完，已重新循環');
+                }
+
+                if (pool.length === 0) {
+                    usedIndices.length = 0;
+                    pool = poolSpiceOnly();
+                }
+
+                if (pool.length === 0 && maxSpice < 3) {
+                    usedIndices.length = 0;
+                    for (let i = 0; i < questionList.length; i++) {
+                        if (!usedIndices.includes(i)) pool.push(i);
+                    }
+                    if (pool.length > 0) {
+                        toastMsg = '此尺度下幾乎沒有題目，已暫時放寬尺度';
+                    }
+                }
+
+                if (pool.length === 0) {
+                    usedIndices.length = 0;
+                    pool = Array.from({ length: questionList.length }, (_, i) => i);
+                    toastMsg = '可抽題已輪完，已重新循環（全庫）';
+                }
+
+                if (toastMsg) {
+                    showToast(toastMsg);
                 }
 
                 const randomIndex = pool[Math.floor(Math.random() * pool.length)];
@@ -791,13 +939,9 @@
 
                     const usedArr = currentType === 'truth' ? usedTruthIndices : usedDareIndices;
                     const total = currentType === 'truth' ? truthQuestions.length : dareQuestions.length;
-                    const maxSpice = getMaxSpice();
-                    const levels = currentType === 'truth' ? truthQuestionLevels : dareQuestionLevels;
-                    let inBand = 0;
-                    for (let i = 0; i < levels.length; i++) {
-                        if (matchesSpice(levels[i], maxSpice)) inBand++;
-                    }
-                    elements.usageStats.textContent = `(${currentType === 'truth' ? '真心話' : '大冒險'} 本輪已抽 ${usedArr.length}／符合尺度約 ${inBand} 題／全庫 ${total} 題)`;
+                    const filtered = countFiltered(currentType);
+                    const dirLabel = currentDir === 'mix' ? '混合' : currentDir === 'a' ? 'A' : 'B';
+                    elements.usageStats.textContent = `(${currentType === 'truth' ? '真心話' : '大冒險'} 本輪已抽 ${usedArr.length}／符合篩選約 ${filtered} 題／方向 ${dirLabel}／全庫 ${total} 題)`;
 
                     elements.questionBox.style.opacity = '1';
                     elements.questionBox.style.transform = 'scale(1)';
@@ -830,6 +974,24 @@
             loadQuestionsForSEO();
 
             updateModeUI();
+            updateDirSegUI();
+
+            function bindDirButton(el, dir) {
+                if (!el) return;
+                el.addEventListener('click', function () {
+                    if (currentDir === dir) return;
+                    currentDir = dir;
+                    updateDirSegUI();
+                    usedTruthIndices = [];
+                    usedDareIndices = [];
+                    if (currentType) {
+                        handleNextQuestion(currentType);
+                    }
+                });
+            }
+            bindDirButton(elements.dirMix, 'mix');
+            bindDirButton(elements.dirA, 'a');
+            bindDirButton(elements.dirB, 'b');
 
             // --- 事件監聽器 (確保在 DOM 元素存在後才綁定) ---
 
@@ -885,9 +1047,9 @@
             });
 
             elements.spiceSelect.addEventListener('change', () => {
+                usedTruthIndices = [];
+                usedDareIndices = [];
                 if (currentType) {
-                    usedTruthIndices = [];
-                    usedDareIndices = [];
                     handleNextQuestion(currentType);
                 }
             });
