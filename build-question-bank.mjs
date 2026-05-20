@@ -46,6 +46,32 @@ function inferDareLevel(q) {
   return 2;
 }
 
+/** 方向 A＝關係／故事／價值；方向 B＝身體／親密／性向話題（關鍵字啟發式，可事後人工覆寫） */
+function inferTruthDirectionAB(q) {
+  const s = q;
+  if (
+    /性行為|口交|裸體|裸奔|內褲|罩杯|胸圍|春夢|避孕|謎片|成人片|一夜情|炮友|舌吻|做愛|上床|高潮|意淫|保險套|自慰|手淫|初夜|親密|接吻|吻|濕|硬|身體|胸部|屁股/.test(
+      s,
+    )
+  ) {
+    return "B";
+  }
+  return "A";
+}
+
+/** 方向 A＝單人表演／口才；方向 B＝與現場他人互動或相簿等（關鍵字啟發式） */
+function inferDareDirectionAB(q) {
+  const s = q;
+  if (
+    /與一位朋友|一位朋友|擊掌|合照|對視|相簿第|採訪一位朋友|背靠背|同步拍手|輪流.*朋友|旁邊的人|指定.*朋友|選一位/.test(
+      s,
+    )
+  ) {
+    return "B";
+  }
+  return "A";
+}
+
 function uniquePush(arr, set, s) {
   if (!s || set.has(s)) return;
   set.add(s);
@@ -250,6 +276,8 @@ if (truthFull.length !== 500) {
 
 const truthQuestionLevels = truthFull.map(inferTruthLevel);
 const dareQuestionLevels = dareList.map(inferDareLevel);
+const truthQuestionDirs = truthFull.map((q) => (inferTruthDirectionAB(q) === "B" ? 1 : 0));
+const dareQuestionDirs = dareList.map((q) => (inferDareDirectionAB(q) === "B" ? 1 : 0));
 
 function formatArray(name, items) {
   const lines = items.map((q) => "    " + JSON.stringify(q));
@@ -262,8 +290,11 @@ function formatNumArray(name, items) {
 }
 
 const META_HEADER = `/**
- * NightBox 題目尺度（與 question.js 題序對應）
- * 1=輕鬆 2=一般 3=辛辣；由建置腳本推斷，可手動編輯此檔後不需改題文
+ * NightBox 題目 meta（與 question.js 題序對應）
+ * truthQuestionLevels / dareQuestionLevels：1=輕鬆 2=一般 3=辛辣
+ * truthQuestionDirs / dareQuestionDirs：0=方向A 1=方向B（關鍵字啟發式，可手動編輯）
+ *   真心話 A≈關係／故事／價值；B≈身體／親密向
+ *   大冒險 A≈單人表演／口才；B≈與現場互動／相簿等
  */
 `;
 
@@ -272,6 +303,10 @@ const metaBody =
   formatNumArray("truthQuestionLevels", truthQuestionLevels) +
   "\n" +
   formatNumArray("dareQuestionLevels", dareQuestionLevels) +
+  "\n" +
+  formatNumArray("truthQuestionDirs", truthQuestionDirs) +
+  "\n" +
+  formatNumArray("dareQuestionDirs", dareQuestionDirs) +
   "\n";
 
 writeFileSync(new URL("./question-meta.js", import.meta.url), metaBody, "utf8");
