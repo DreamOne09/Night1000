@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="NightBox 1000：專為夜晚聚會設計的真心話大冒險題庫，1000 題派對向、辛辣好笑、可自訂安全範圍。Web3 Vibe 風格，立即抽取題目！">
+    <meta name="description" content="NightBox 1000：專為夜晚聚會設計的真心話大冒險題庫，1000 題派對向。不對味就換一題，安全與同意優先。Web3 Vibe 風格，立即抽取！">
     <meta name="keywords" content="真心話大冒險, NightBox, 派對遊戲, 情感, 題庫, web3, Vibe Coding, 遊戲題目, 情侶對話, 深度夜聊">
     <meta name="robots" content="index, follow">
     
@@ -393,7 +393,7 @@
             text-decoration: underline;
         }
 
-        /* 2.0：尺度篩選、回饋（手機優先） */
+        /* 2.0：方向分袋、回饋（手機優先） */
         #control-bar {
             max-width: 92%;
             width: 100%;
@@ -424,16 +424,6 @@
             line-height: 1.45;
             color: var(--border-color);
             text-align: center;
-        }
-        #spice-select {
-            flex: 1 1 160px;
-            min-height: 44px;
-            padding: 0.4rem 0.65rem;
-            border-radius: 8px;
-            border: 1px solid var(--accent-green);
-            background: var(--primary-bg);
-            color: var(--text-contrast);
-            font-size: 1rem;
         }
         /* 方向：混合／A／B */
         .direction-seg {
@@ -508,17 +498,6 @@
         .feedback-btn-bad:active {
             box-shadow: 0 0 16px var(--glow-dare);
         }
-        #spice-badge {
-            display: inline-block;
-            margin-left: 0.35rem;
-            padding: 0.15rem 0.45rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            vertical-align: middle;
-            border: 1px solid var(--border-color);
-            color: var(--accent-warn);
-        }
         #toast {
             position: fixed;
             left: 50%;
@@ -571,10 +550,10 @@
             </p>
 
             <p>
-                2.0：可選尺度（輕鬆／一般／辛辣）與方向（混合／方向 A／方向 B，由關鍵字自動分袋，之後可人工微調）；「好題／爛題」僅存於本機，方便整理，不會上傳伺服器。
+                2.0：可選方向（混合／方向 A／方向 B）—由關鍵字自動分袋，你可之後微調題庲；不喜歡的題請直接按「換一題」，不必事先篩尺度。「好題／爛題」僅存本機整理用，不上傳。
             </p>
             <p>
-                不滿意題目？按「換一題」即可，開心最重要。
+                題庫為真心話五百題加大冒險五百題（共約千題）。
             </p>
             
             <p class="dev-note">
@@ -592,15 +571,7 @@
     <h1>NightBox 1000</h1>
     <h2>三五好友一起玩真心話大冒險</h2>
 
-    <div id="control-bar" aria-label="尺度、方向與回饋">
-        <div class="control-row">
-            <label for="spice-select">尺度</label>
-            <select id="spice-select" title="只抽符合尺度的題目">
-                <option value="3">辛辣（含一般、輕鬆）</option>
-                <option value="2" selected>一般（含輕鬆）</option>
-                <option value="1">輕鬆</option>
-            </select>
-        </div>
+    <div id="control-bar" aria-label="方向與回饋">
         <p class="control-hint" id="direction-hint">
             方向 A／B 為自動分類：真心話 A 偏關係與故事、B 偏身體與親密；大冒險 A 偏單人表演、B 偏現場互動。可之後逐題校正。
         </p>
@@ -625,7 +596,7 @@
         <p id="question-text">點擊下方按鈕開始遊戲吧！</p>
     </div>
 
-    <p id="type-text" style="opacity: 0;">— 這是 **<span id="type-label">真心話</span>** 題目<span id="spice-badge-wrap" style="display:none;"> · <span id="spice-badge"></span></span> —</p>
+    <p id="type-text" style="opacity: 0;">— 這是 **<span id="type-label">真心話</span>** 題目 —</p>
 
     <div id="button-group">
         <button type="button" id="change-btn" class="btn">換一題</button>
@@ -703,9 +674,6 @@
                 truthCount: document.getElementById('truth-count'),
                 dareCount: document.getElementById('dare-count'),
                 usageStats: document.getElementById('usage-stats'),
-                spiceSelect: document.getElementById('spice-select'),
-                spiceBadge: document.getElementById('spice-badge'),
-                spiceBadgeWrap: document.getElementById('spice-badge-wrap'),
                 feedbackGood: document.getElementById('feedback-good'),
                 feedbackBad: document.getElementById('feedback-bad'),
                 feedbackExport: document.getElementById('feedback-export'),
@@ -767,14 +735,6 @@
                 }
             }
 
-            function getMaxSpice() {
-                return parseInt(elements.spiceSelect.value, 10) || 2;
-            }
-
-            function matchesSpice(level, maxSpice) {
-                return level <= maxSpice;
-            }
-
             function matchesDir(dirBit, mode) {
                 if (mode === 'mix') return true;
                 if (mode === 'a') return dirBit === 0;
@@ -805,12 +765,9 @@
 
             function countFiltered(type) {
                 const questionList = type === 'truth' ? truthQuestions : dareQuestions;
-                const levels = type === 'truth' ? truthQuestionLevels : dareQuestionLevels;
                 const dirs = type === 'truth' ? truthDirsFallback() : dareDirsFallback();
-                const maxSpice = getMaxSpice();
                 let n = 0;
                 for (let i = 0; i < questionList.length; i++) {
-                    if (!matchesSpice(levels[i], maxSpice)) continue;
                     if (!matchesDir(dirs[i], currentDir)) continue;
                     n++;
                 }
@@ -831,33 +788,23 @@
                 if (currentType === 'dare') elements.questionBox.classList.add('q-dare');
             }
 
-            function spiceLabel(lv) {
-                if (lv === 1) return '輕鬆';
-                if (lv === 2) return '一般';
-                return '辛辣';
-            }
-
             function getNewQuestion(type) {
                 const questionList = type === 'truth' ? truthQuestions : dareQuestions;
-                const levels = type === 'truth' ? truthQuestionLevels : dareQuestionLevels;
                 const dirs = type === 'truth' ? truthDirsFallback() : dareDirsFallback();
                 let usedIndices = type === 'truth' ? usedTruthIndices : usedDareIndices;
-                const maxSpice = getMaxSpice();
 
                 function candidates() {
                     const out = [];
                     for (let i = 0; i < questionList.length; i++) {
-                        if (!matchesSpice(levels[i], maxSpice)) continue;
                         if (!matchesDir(dirs[i], currentDir)) continue;
                         if (!usedIndices.includes(i)) out.push(i);
                     }
                     return out;
                 }
 
-                function poolSpiceOnly() {
+                function candidatesIgnoreDir() {
                     const out = [];
                     for (let i = 0; i < questionList.length; i++) {
-                        if (!matchesSpice(levels[i], maxSpice)) continue;
                         if (!usedIndices.includes(i)) out.push(i);
                     }
                     return out;
@@ -870,30 +817,20 @@
                     usedIndices.length = 0;
                     pool = candidates();
                     if (pool.length > 0) {
-                        toastMsg = '此篩選下可抽題已輪完，已重新循環';
+                        toastMsg = '此方向下可抽題已輪完，已重新循環';
                     }
                 }
 
                 if (pool.length === 0 && currentDir !== 'mix') {
-                    pool = poolSpiceOnly();
+                    pool = candidatesIgnoreDir();
                     if (pool.length > 0) {
-                        toastMsg = '此方向題目已抽完或過少，已改為符合尺度即可（兩方向）';
+                        toastMsg = '此方向暫無未抽題目，已改抽兩方向（全庫）';
                     }
                 }
 
                 if (pool.length === 0) {
                     usedIndices.length = 0;
-                    pool = poolSpiceOnly();
-                }
-
-                if (pool.length === 0 && maxSpice < 3) {
-                    usedIndices.length = 0;
-                    for (let i = 0; i < questionList.length; i++) {
-                        if (!usedIndices.includes(i)) pool.push(i);
-                    }
-                    if (pool.length > 0) {
-                        toastMsg = '此尺度下幾乎沒有題目，已暫時放寬尺度';
-                    }
+                    pool = candidatesIgnoreDir();
                 }
 
                 if (pool.length === 0) {
@@ -912,7 +849,7 @@
                 else usedDareIndices = usedIndices;
 
                 currentQuestionIndex = randomIndex;
-                return { text: questionList[randomIndex], level: levels[randomIndex] };
+                return { text: questionList[randomIndex] };
             }
 
             function handleNextQuestion(newType) {
@@ -931,17 +868,13 @@
                     elements.typeText.style.opacity = '1';
                     elements.typeText.className = currentType === 'truth' ? 'type-truth' : 'type-dare';
                     elements.typeLabel.textContent = currentType === 'truth' ? '真心話' : '大冒險';
-                    if (picked.level != null) {
-                        elements.spiceBadge.textContent = 'Lv.' + picked.level + ' ' + spiceLabel(picked.level);
-                        elements.spiceBadgeWrap.style.display = 'inline';
-                    }
                     updateModeUI();
 
                     const usedArr = currentType === 'truth' ? usedTruthIndices : usedDareIndices;
                     const total = currentType === 'truth' ? truthQuestions.length : dareQuestions.length;
-                    const filtered = countFiltered(currentType);
+                    const dirPool = countFiltered(currentType);
                     const dirLabel = currentDir === 'mix' ? '混合' : currentDir === 'a' ? 'A' : 'B';
-                    elements.usageStats.textContent = `(${currentType === 'truth' ? '真心話' : '大冒險'} 本輪已抽 ${usedArr.length}／符合篩選約 ${filtered} 題／方向 ${dirLabel}／全庫 ${total} 題)`;
+                    elements.usageStats.textContent = `(${currentType === 'truth' ? '真心話' : '大冒險'} 本輪已抽 ${usedArr.length}／方向 ${dirLabel} 約 ${dirPool} 題／該類全庫 ${total} 題；不含意就換一題）`;
 
                     elements.questionBox.style.opacity = '1';
                     elements.questionBox.style.transform = 'scale(1)';
@@ -1046,15 +979,6 @@
                 }
             });
 
-            elements.spiceSelect.addEventListener('change', () => {
-                usedTruthIndices = [];
-                usedDareIndices = [];
-                if (currentType) {
-                    handleNextQuestion(currentType);
-                }
-            });
-
-            updateFeedbackStatsLine();
         });
         
     </script>

@@ -1,6 +1,6 @@
 /**
  * NightBox 題目 meta（與 question.js 題序對應）
- * truthQuestionLevels / dareQuestionLevels：1=輕鬆 2=一般 3=辛辣
+ * truthQuestionLevels / dareQuestionLevels：1=輕鬆 2=一般 3=辛辣（備用，介面不篩選）
  * truthQuestionDirs / dareQuestionDirs：0=方向A 1=方向B（關鍵字啟發式，可手動編輯）
  *   真心話 A≈關係／故事／價值；B≈身體／親密向
  *   大冒險 A≈單人表演／口才；B≈與現場互動／相簿等
