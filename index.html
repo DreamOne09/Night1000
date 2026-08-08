@@ -376,8 +376,6 @@
             #control-bar { max-width: 96%; padding: 0.85rem 0.75rem; }
             .control-hint { font-size: 0.72rem; padding: 0 0.25rem; }
             .seg-btn { font-size: 0.82rem; min-height: 46px; }
-            #feedback-row { justify-content: stretch; }
-            #feedback-row .feedback-btn { flex: 1 1 30%; }
         }
 
         .developer-info {
@@ -393,7 +391,7 @@
             text-decoration: underline;
         }
 
-        /* 2.0：方向分袋、回饋（手機優先） */
+        /* 2.0：方向分袋（手機優先） */
         #control-bar {
             max-width: 92%;
             width: 100%;
@@ -466,38 +464,6 @@
             color: var(--primary-bg);
             box-shadow: 0 0 14px var(--glow-green);
         }
-        #feedback-row {
-            margin-top: 0.75rem;
-            padding-top: 0.75rem;
-            border-top: 1px solid var(--border-color);
-        }
-        .feedback-btn {
-            min-height: 44px;
-            min-width: 44px;
-            padding: 0.5rem 1rem;
-            border-radius: 10px;
-            border: 2px solid var(--border-color);
-            background: var(--secondary-bg);
-            color: var(--text-contrast);
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .feedback-btn-good {
-            border-color: var(--accent-truth);
-            color: var(--accent-truth);
-        }
-        .feedback-btn-good:active {
-            box-shadow: 0 0 16px var(--glow-truth);
-        }
-        .feedback-btn-bad {
-            border-color: var(--accent-dare);
-            color: var(--accent-dare);
-        }
-        .feedback-btn-bad:active {
-            box-shadow: 0 0 16px var(--glow-dare);
-        }
         #toast {
             position: fixed;
             left: 50%;
@@ -519,13 +485,6 @@
         #toast.toast-visible {
             transform: translateX(-50%) translateY(0);
             opacity: 1;
-        }
-        #feedback-stats {
-            font-size: 0.85rem;
-            color: var(--text-light);
-            margin-top: 0.35rem;
-            text-align: center;
-            width: 100%;
         }
         main.page-wrap {
             padding-bottom: max(1rem, env(safe-area-inset-bottom));
@@ -550,7 +509,7 @@
             </p>
 
             <p>
-                2.0：可選方向（混合／方向 A／方向 B）—由關鍵字自動分袋，你可之後微調題庲；不喜歡的題請直接按「換一題」，不必事先篩尺度。「好題／爛題」僅存本機整理用，不上傳。
+                可選方向（混合／方向 A／方向 B）；不喜歡的題目直接按「換一題」。題目優先保留具體故事、靈魂拷問與成人話題。
             </p>
             <p>
                 題庫為真心話五百題加大冒險五百題（共約千題）。
@@ -571,7 +530,7 @@
     <h1>NightBox 1000</h1>
     <h2>三五好友一起玩真心話大冒險</h2>
 
-    <div id="control-bar" aria-label="方向與回饋">
+    <div id="control-bar" aria-label="題目方向">
         <p class="control-hint" id="direction-hint">
             方向 A／B 為自動分類：真心話 A 偏關係與故事、B 偏身體與親密；大冒險 A 偏單人表演、B 偏現場互動。可之後逐題校正。
         </p>
@@ -582,13 +541,6 @@
                 <button type="button" class="seg-btn" id="dir-a" data-dir="a" aria-pressed="false" title="真心話：關係／故事；大冒險：單人表演">方向 A</button>
                 <button type="button" class="seg-btn" id="dir-b" data-dir="b" aria-pressed="false" title="真心話：身體／親密；大冒險：與現場互動">方向 B</button>
             </div>
-        </div>
-        <p id="feedback-stats" class="sr-only" aria-live="polite"></p>
-        <div id="feedback-row" class="control-row">
-            <span class="sr-only" id="feedback-hint">為目前題目評分（存於本機，不上傳）</span>
-            <button type="button" class="feedback-btn feedback-btn-good" id="feedback-good" aria-describedby="feedback-hint">好題</button>
-            <button type="button" class="feedback-btn feedback-btn-bad" id="feedback-bad" aria-describedby="feedback-hint">爛題</button>
-            <button type="button" class="feedback-btn" id="feedback-export" title="複製 JSON 到剪貼簿">匯出回饋</button>
         </div>
     </div>
 
@@ -674,10 +626,6 @@
                 truthCount: document.getElementById('truth-count'),
                 dareCount: document.getElementById('dare-count'),
                 usageStats: document.getElementById('usage-stats'),
-                feedbackGood: document.getElementById('feedback-good'),
-                feedbackBad: document.getElementById('feedback-bad'),
-                feedbackExport: document.getElementById('feedback-export'),
-                feedbackStats: document.getElementById('feedback-stats'),
                 toast: document.getElementById('toast'),
                 dirMix: document.getElementById('dir-mix'),
                 dirA: document.getElementById('dir-a'),
@@ -689,50 +637,12 @@
             let currentDir = 'mix';
             let usedTruthIndices = [];
             let usedDareIndices = [];
-            let currentQuestionIndex = -1;
-
-            const LS_FEEDBACK = 'nightbox_feedback_v1';
-
-            function loadFeedback() {
-                try {
-                    const raw = localStorage.getItem(LS_FEEDBACK);
-                    if (!raw) {
-                        return { goodTruth: [], badTruth: [], goodDare: [], badDare: [] };
-                    }
-                    const o = JSON.parse(raw);
-                    return {
-                        goodTruth: o.goodTruth || [],
-                        badTruth: o.badTruth || [],
-                        goodDare: o.goodDare || [],
-                        badDare: o.badDare || []
-                    };
-                } catch (e) {
-                    return { goodTruth: [], badTruth: [], goodDare: [], badDare: [] };
-                }
-            }
-
-            function saveFeedback(fb) {
-                localStorage.setItem(LS_FEEDBACK, JSON.stringify(fb));
-            }
 
             function showToast(msg) {
                 elements.toast.textContent = msg;
                 elements.toast.classList.add('toast-visible');
                 clearTimeout(showToast._t);
                 showToast._t = setTimeout(() => elements.toast.classList.remove('toast-visible'), 2200);
-            }
-
-            function updateFeedbackStatsLine() {
-                const fb = loadFeedback();
-                const g = (currentType === 'truth' ? fb.goodTruth.length : fb.goodDare.length)
-                    + (currentType === 'truth' ? fb.badTruth.length : fb.badDare.length);
-                if (g > 0 && currentType) {
-                    elements.feedbackStats.textContent = `本機已記錄 ${g} 筆回饋（${currentType === 'truth' ? '真心話' : '大冒險'}）`;
-                    elements.feedbackStats.classList.remove('sr-only');
-                } else {
-                    elements.feedbackStats.textContent = '';
-                    elements.feedbackStats.classList.add('sr-only');
-                }
             }
 
             function matchesDir(dirBit, mode) {
@@ -848,7 +758,6 @@
                 if (type === 'truth') usedTruthIndices = usedIndices;
                 else usedDareIndices = usedIndices;
 
-                currentQuestionIndex = randomIndex;
                 return { text: questionList[randomIndex] };
             }
 
@@ -878,7 +787,6 @@
 
                     elements.questionBox.style.opacity = '1';
                     elements.questionBox.style.transform = 'scale(1)';
-                    updateFeedbackStatsLine();
                 }, 300);
             }
 
@@ -944,38 +852,6 @@
                     if (!currentType) return;
                     e.preventDefault();
                     handleNextQuestion(currentType);
-                }
-            });
-
-            function recordFeedback(kind) {
-                if (currentQuestionIndex < 0 || !currentType) {
-                    showToast('先抽一題再評分');
-                    return;
-                }
-                const fb = loadFeedback();
-                const goodKey = currentType === 'truth' ? 'goodTruth' : 'goodDare';
-                const badKey = currentType === 'truth' ? 'badTruth' : 'badDare';
-                const target = kind === 'good' ? goodKey : badKey;
-                const other = kind === 'good' ? badKey : goodKey;
-                if (!fb[target].includes(currentQuestionIndex)) fb[target].push(currentQuestionIndex);
-                fb[other] = fb[other].filter((i) => i !== currentQuestionIndex);
-                saveFeedback(fb);
-                showToast(kind === 'good' ? '已記：好題（存本機）' : '已記：爛題（存本機）');
-                updateFeedbackStatsLine();
-            }
-
-            elements.feedbackGood.addEventListener('click', () => recordFeedback('good'));
-            elements.feedbackBad.addEventListener('click', () => recordFeedback('bad'));
-            elements.feedbackExport.addEventListener('click', () => {
-                const payload = Object.assign(loadFeedback(), {
-                    exportedAt: new Date().toISOString(),
-                    note: '索引對應 question.js 同類型題序（0 起算）'
-                });
-                const text = JSON.stringify(payload, null, 2);
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(text).then(() => showToast('已複製 JSON 到剪貼簿'));
-                } else {
-                    showToast(JSON.stringify(payload));
                 }
             });
 

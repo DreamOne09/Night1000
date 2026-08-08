@@ -92,11 +92,20 @@ function buildTruthTail() {
   const headPath = new URL("./question-truth-head.txt", import.meta.url);
   const headQs = new Set(extractQuestionsFromSource(readFileSync(headPath, "utf8")));
 
-  const path = new URL("./tail-manual-pool.txt", import.meta.url);
-  const lines = readFileSync(path, "utf8")
-    .split("\n")
-    .map((l) => l.trim())
-    .filter((l) => l.length > 0);
+  const readQuestionLines = (path) =>
+    readFileSync(path, "utf8")
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+  // 人工精選題永遠優先進入產出；一般尾池只負責補足 275 題。
+  const premiumLines = readQuestionLines(
+    new URL("./truth-premium-pool.txt", import.meta.url),
+  );
+  const manualLines = readQuestionLines(
+    new URL("./tail-manual-pool.txt", import.meta.url),
+  );
+  const lines = premiumLines.concat(manualLines);
 
   const out = [];
   const seen = new Set();
@@ -127,7 +136,7 @@ function buildDareQuestions() {
   const seen = new Set();
   const add = (s) => uniquePush(out, seen, s);
   const AGREED =
-    "須對方事先知情且同意；對方明示拒談、封鎖、未接或未讀即止，不得以連續騷擾取代；可換人／改喝啤酒半杯／改題。";
+    "涉及第三人時尊重對方拒絕；未接只留一次訊息，不連續騷擾；可換人／改喝一口／改題。";
 
   const D = ["20 秒", "25 秒", "30 秒", "35 秒", "40 秒", "45 秒", "55 秒", "1 分鐘"];
 
@@ -147,7 +156,7 @@ function buildDareQuestions() {
     }
   }
 
-  // ---（2）曖昧對象／狂撥與語音張力 ---
+  // ---（2）曖昧對象／直球連線 ---
   const ambiguousTargets = [
     "目前正在曖昧、私訊最勤的那位對象",
     "你想推進但仍卡住的那位曖昧對象",
@@ -155,10 +164,10 @@ function buildDareQuestions() {
     "若心動對象在座可當場；不在座就換電話或視訊",
   ];
   const spamRules = [
-    "對方電話若未接通，二十分鐘內要完成至少五次不同時間戳的外撥或平台語音（現場幫數；同一分鐘狂震不算）；任一接通就立刻停並開免持講你是在續攤大冒險",
-    "改用訊息：連傳五次不重複問候語（由左右鄰協助句式）直到已讀或回覆任一；對方明示勿再傳就立刻停並改喝啤酒",
-    "先規定對方接了只講「今天抽到你就想到你」再報十五秒近況就掛；若未接再起第二次到第五次留最後一則語音信箱",
-    "視訊響三下不接就改電話門號；全流程最多五通並每通間隔三十分鐘內要完成（避免深夜騷擾）",
+    "撥一次電話；接通後直說「今天抽到你，第一個想到你」並聊十五秒近況；未接只留一則相同內容的語音",
+    "傳一則由左右鄰共同想的十字內直球訊息；送出後秀打碼截圖，不要求對方立刻回覆",
+    "打一次語音電話；接通後問「如果我認真約你一次，你會答應嗎？」聽完答案就道謝收線",
+    "傳一則「今晚玩大冒險，但這句是真的：我想更認識你」；若不想真的送出，就對備忘錄念完再換題",
   ];
   for (const t of ambiguousTargets) {
     for (const r of spamRules) {
@@ -288,14 +297,14 @@ function buildDareQuestions() {
   ];
   const tBudget = [
     "四十五秒收束",
-    "九十秒包含留言紀錄",
+    "九十秒內完成並保留留言紀錄",
     "耐性版九分鐘內要有發送紀錄",
     "兩分鐘內交卷（接通或紀錄）",
     "五分鐘內完成並秀已撥截圖",
     "對方若在忙就只留三十秒信箱不要狂撥超過三通",
     "若深夜時段對方明示睡覺就改天亮前傳早安訊息截圖",
     "對方若在聚會就只傳無聲貼圖直到對方有空回撥為止",
-    "對方若在開車就只留語音並不可要求秒回（安全優先）",
+    "對方若在開車就只留文字並不可要求秒回（安全優先）",
   ];
   for (const who of targets) {
     for (const [open, rule] of schemes) {
@@ -330,6 +339,21 @@ function buildDareQuestions() {
         add(`打給「${w}」：${op}；${tk}；${AGREED}`);
       }
     }
+  }
+
+  const bannedDarePatterns = [
+    /同步拍手/,
+    /抖音熱門/,
+    /手機當麥克風/,
+    /未接.*五通/,
+    /連傳五次/,
+    /撓癢癢|擦鞋|手上畫.*愛心/,
+  ];
+  const rejected = out.filter((question) =>
+    bannedDarePatterns.some((pattern) => pattern.test(question)),
+  );
+  if (rejected.length > 0) {
+    throw new Error(`dare quality gate rejected ${rejected.length} questions`);
   }
 
   if (out.length < 500) {
