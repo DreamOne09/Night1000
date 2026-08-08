@@ -132,11 +132,6 @@ function buildTruthTail() {
 }
 
 function buildDareQuestions() {
-  const SOLO_RULE =
-    "不點名、不要求任何在座者回應；你可無條件換題。";
-  const VOLUNTEER_RULE =
-    "邀請一位自願者；對方可拒絕或隨時停止，彼此沒有適合情境就換題；你也可無條件換題。";
-
   // 每個核心描述不同的關係事件與代價；不以時間、對象或道具序號製造變體。
   const categories = [
     {
@@ -294,36 +289,36 @@ function buildDareQuestions() {
   const soloForms = [
     {
       label: "全場直說",
-      build: (topic, proof) =>
-        `面對全場，就「${topic}」完成一次真實表達；${proof}；不能只講結論，必須補上行為、影響與後果。`,
+      build: (topic) =>
+        `不點名，對全場說出「${topic}」：發生了什麼，這件事改變了你什麼？`,
     },
     {
       label: "不寄短箋",
-      build: (topic, proof) =>
-        `把「${topic}」寫成一張不送出的短箋，再向全場讀出最關鍵的一句；${proof}；不得透露當事人姓名或可辨識資訊。`,
+      build: (topic) =>
+        `把「${topic}」寫成一句不寄出的話，念完後收起來；不要透露姓名。`,
     },
     {
       label: "代價盤點",
-      build: (topic, proof) =>
-        `針對「${topic}」，依序說出你做了什麼、影響了誰、得到什麼、又失去什麼；${proof}。`,
+      build: (topic) =>
+        `針對「${topic}」，用三句話說明：發生什麼、影響誰、你學到什麼。`,
     },
     {
       label: "行動兌現",
-      build: (topic, proof) =>
-        `把「${topic}」轉成一個只由你負責、離場後仍能兌現的具體行動；${proof}；向全場說明完成條件與做不到時如何負責。`,
+      build: (topic) =>
+        `為「${topic}」說出一個你願意完成的下一步，並給自己期限。`,
     },
   ];
 
   const volunteerForms = [
     {
       label: "自願對談",
-      build: (topic, proof) =>
-        `和自願者就「${topic}」各說一次自己的經驗；${proof}；雙方只能追問一題，不替對方下結論。`,
+      build: (topic) =>
+        `邀請一位自願者，輪流分享「${topic}」；彼此只能追問一題。`,
     },
     {
       label: "自願見證",
-      build: (topic, proof) =>
-        `請自願者只擔任傾聽與見證者；你就「${topic}」完成表達；${proof}；最後由自願者確認是否聽見行為、影響與後果，不評判內容。`,
+      build: (topic) =>
+        `邀請一位自願者當見證者：就「${topic}」說出一項具體承諾。`,
     },
   ];
 
@@ -347,7 +342,7 @@ function buildDareQuestions() {
 
   const out = [];
   for (const category of categories) {
-    category.prompts.forEach(([topic, proof], promptIndex) => {
+    category.prompts.forEach(([topic], promptIndex) => {
       // 前半核心採 4 單人＋1 自願，後半採 3 單人＋2 自願：
       // 全庫精確為 350 題不指定玩家、150 題自願互動。
       const forms =
@@ -355,11 +350,7 @@ function buildDareQuestions() {
           ? soloForms.concat(volunteerForms.slice(0, 1))
           : soloForms.slice(0, 3).concat(volunteerForms);
       for (const form of forms) {
-        const isVolunteer = form.label.startsWith("自願");
-        const rule = isVolunteer ? VOLUNTEER_RULE : SOLO_RULE;
-        out.push(
-          `【${category.label}／${form.label}】${rule} ${form.build(topic, proof)}`,
-        );
+        out.push(form.build(topic));
       }
     });
   }
@@ -390,6 +381,12 @@ function buildDareQuestions() {
   if (volunteerCount !== 150 || out.length - volunteerCount !== 350) {
     throw new Error(
       `dare mix expected 350 solo + 150 volunteer, got ${out.length - volunteerCount} + ${volunteerCount}`,
+    );
+  }
+  const tooLong = out.filter((question) => question.length > 72);
+  if (tooLong.length > 0) {
+    throw new Error(
+      `dare readability gate rejected ${tooLong.length} questions over 72 chars: ${tooLong[0]}`,
     );
   }
   return out;
